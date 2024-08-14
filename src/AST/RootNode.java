@@ -1,6 +1,6 @@
 package AST;
 
-import Util.error.position;
+import Util.position;
 
 import java.util.ArrayList;
 

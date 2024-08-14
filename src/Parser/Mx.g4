@@ -1,19 +1,23 @@
 grammar Mx;
 
-program: (varDef | funcDef | classDef)* EOF;
+program: body* EOF;
+body : (varDefStmt | funcDef | classDef);
 
 newVar : (buildin_typename | Identifier) ('(' ')' | ('[' expression? ']')*) ;
 
-varDef : typename varDeclare (',' varDeclare)* ';';
-buildin_typename : Int | Bool | String;
-typename : (buildin_typename | Identifier) ('[' ']')*;
-varDeclare : Identifier (Assign expression)?;
+varDef : typename varDeclare (',' varDeclare)*;
+varDefStmt : varDef ';';//done
+buildin_typename : Int | Bool | String;//done
+typename : (buildin_typename | Identifier) ('[' ']')*;//done
+varDeclare : Identifier (Assign expression)?;//done
 
-functypename : typename | Void;
-funcDef : functypename Identifier '(' (typename Identifier (',' typename Identifier)*)? ')' suite;
+functypename : typename | Void;//done
+funcDef : functypename Identifier '(' parameterList? ')' suite;//done
+parameterList : parameter (',' parameter)*;//done
+parameter : typename Identifier;//done
 
-classDef : Class Identifier '{' (varDef | funcDef)* classConstruct? (varDef | funcDef)* '}' ';';
-classConstruct : Identifier '(' ')' suite;
+classDef : Class Identifier '{' (varDefStmt | funcDef)* classConstruct? (varDefStmt | funcDef)* '}' ';';
+classConstruct : Identifier '(' ')' suite;//done
 
 suite : '{' statement* '}';
 
@@ -29,27 +33,27 @@ controlStatement
     ;
 
 statement
-    : suite                                                 #block
-    | varDef                                                #vardefStmt
+    : suite                                                 #block//done
+    | varDefStmt                                            #vardefStmt
     | If '(' expression ')' trueStmt=statement
-        (Else falseStmt=statement)?                         #ifStmt
-    | loopStatement                                         #loopStmt
-    | controlStatement                                      #controlStmt
-    | expression ';'                                        #pureExprStmt
+        (Else falseStmt=statement)?                         #ifStmt//done
+    | loopStatement                                         #loopStmt//forStmt, todo_; whileStmt, done
+    | controlStatement                                      #controlStmt//breakStmt, continueStmt, returnStmt; all done
+    | expression ';'                                        #pureExprStmt//done
     | ';'                                                   #emptyStmt
     ;
 
 expressionList : '(' (expression (',' expression)*)? ')' ;
 expression
-    : primary                                                   #atomExpr
+    : primary                                                   #atomExpr//done
     | '(' expression ')'                                        #parenExpr
-    | expression expressionList                                 #callExpr
-    | expression '[' expression ']'                             #arrayExpr
+    | expression expressionList                                 #callExpr//done
+    | expression '[' expression ']'                             #arrayExpr//done
 
-    | <assoc=right> (PlusPlus | MinusMinus) expression          #preIncExpr
-    | expression (PlusPlus | MinusMinus)                        #postIncExpr
-    | <assoc=right> (Plus | Minus | Not | Tilde) expression     #prefixExpr
-    | <assoc=right> New newVar                                  #newExpr
+    | <assoc=right> (PlusPlus | MinusMinus) expression          #preIncExpr//done
+    | expression (PlusPlus | MinusMinus)                        #postIncExpr//done
+    | <assoc=right> (Plus | Minus | Not | Tilde) expression     #prefixExpr//done
+    | <assoc=right> New newVar                                  #newExpr//TODO
 
     | expression op=(Plus | Minus | Mul | Div | Mod) expression #binaryExpr
     | expression op=(Equal | NotEqual) expression               #binaryExpr
@@ -57,11 +61,11 @@ expression
                     | Greater | GreaterEqual) expression        #binaryExpr
     | expression op=(AndAnd | OrOr) expression                  #binaryExpr
     | expression op=(And | Or | Caret
-                    | LeftShift | RightShift) expression        #binaryExpr
-    | <assoc=right> expression Assign expression                #assignExpr
-    | expression Dot expression                                 #memberExpr
+                    | LeftShift | RightShift) expression        #binaryExpr//done
+    | <assoc=right> expression Assign expression                #assignExpr//done, included in binaryExpr
+    | expression Dot expression                                 #memberExpr//done, included in binaryExpr
 
-    | expression Question expression Colon expression           #ternaryExpr
+    | expression Question expression Colon expression           #ternaryExpr//done
     ;
 
 primary
