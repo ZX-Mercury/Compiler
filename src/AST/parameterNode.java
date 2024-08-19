@@ -3,10 +3,10 @@ package AST;
 import Util.position;
 
 public class parameterNode extends ASTNode {
-    public typenameNode type ;
+    public varTypeNode type ;
     public String name ;
 
-    public parameterNode (position pos, typenameNode type, String name) {
+    public parameterNode (position pos, varTypeNode type, String name) {
         super (pos) ;
         this.type = type ;
         this.name = name ;

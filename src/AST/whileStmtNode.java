@@ -2,7 +2,7 @@ package AST;
 
 import Util.position;
 
-public class whileStmtNode  extends StmtNode {
+public class whileStmtNode extends LoopStmtNode {
     public ExpressionNode condition;
     public StmtNode statement;
 

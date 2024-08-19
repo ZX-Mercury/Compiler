@@ -1,20 +1,19 @@
 package AST;
 
-import Util.position;
-
 import java.util.ArrayList;
 
-public class RootNode extends ASTNode {
-    public FnRootNode fn;
-    public ArrayList<structDefNode> strDefs = new ArrayList<>();
+import Util.position;
 
-    public RootNode(position pos, FnRootNode fn) {
-        super(pos);
-        this.fn = fn;
+public class RootNode extends ASTNode {
+    public ArrayList<bodyNode> statements ;
+
+    public RootNode (position pos) {
+        super (pos) ;
+        statements = new ArrayList<>() ;
     }
 
     @Override
-    public void accept(ASTVisitor visitor) {
-        visitor.visit(this);
+    public void accept (ASTVisitor visitor) {
+        visitor.visit (this) ;
     }
 }
