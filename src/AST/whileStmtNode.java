@@ -6,7 +6,7 @@ public class whileStmtNode  extends StmtNode {
     public ExpressionNode condition;
     public StmtNode statement;
 
-    public whileStmtNode(ExpressionNode condition, StmtNode statement, position pos) {
+    public whileStmtNode(position pos, ExpressionNode condition, StmtNode statement) {
         super(pos);
         this.condition = condition;
         this.statement = statement;

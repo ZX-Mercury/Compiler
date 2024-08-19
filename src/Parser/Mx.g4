@@ -5,42 +5,43 @@ body : (varDefStmt | funcDef | classDef);
 
 newVar : (buildin_typename | Identifier) ('(' ')' | ('[' expression? ']')*) ;
 
-varDef : typename varDeclare (',' varDeclare)*;
+varDef : varType varDeclare (',' varDeclare)*;
 varDefStmt : varDef ';';//done
 buildin_typename : Int | Bool | String;//done
-typename : (buildin_typename | Identifier) ('[' ']')*;//done
+varType : (buildin_typename | Identifier) ('[' ']')*;//done
 varDeclare : Identifier (Assign expression)?;//done
 
-functypename : typename | Void;//done
+functypename : varType | Void;//done
 funcDef : functypename Identifier '(' parameterList? ')' suite;//done
 parameterList : parameter (',' parameter)*;//done
-parameter : typename Identifier;//done
+parameter : varType Identifier;//done
 
 classDef : Class Identifier '{' (varDefStmt | funcDef)* classConstruct? (varDefStmt | funcDef)* '}' ';';
 classConstruct : Identifier '(' ')' suite;//done
 
 suite : '{' statement* '}';
 
-loopStatement
+ifStmt : If '(' expression ')' trueStmt=statement (Else falseStmt=statement)?;
+
+loopStmt
     : For '(' (varDef | expression)? ';' expression? ';' expression? ')' statement #forStmt
     | While '(' expression ')' statement #whileStmt
     ;
 
-controlStatement
+controlStmt
     : Break ';'                 #breakStmt
     | Continue ';'              #continueStmt
     | Return expression? ';'    #returnStmt
     ;
 
 statement
-    : suite                                                 #block//done
-    | varDefStmt                                            #vardefStmt
-    | If '(' expression ')' trueStmt=statement
-        (Else falseStmt=statement)?                         #ifStmt//done
-    | loopStatement                                         #loopStmt//forStmt, todo_; whileStmt, done
-    | controlStatement                                      #controlStmt//breakStmt, continueStmt, returnStmt; all done
-    | expression ';'                                        #pureExprStmt//done
-    | ';'                                                   #emptyStmt
+    : suite
+    | varDefStmt
+    | ifStmt
+    | loopStmt
+    | controlStmt
+    | expression ';'
+    | ';'
     ;
 
 expressionList : '(' (expression (',' expression)*)? ')' ;
@@ -52,7 +53,7 @@ expression
 
     | <assoc=right> (PlusPlus | MinusMinus) expression          #preIncExpr//done
     | expression (PlusPlus | MinusMinus)                        #postIncExpr//done
-    | <assoc=right> (Plus | Minus | Not | Tilde) expression     #prefixExpr//done
+    | <assoc=right> (Plus | Minus | Not | Tilde) expression     #unaryExpr//done
     | <assoc=right> New newVar                                  #newExpr//TODO
 
     | expression op=(Plus | Minus | Mul | Div | Mod) expression #binaryExpr
@@ -62,8 +63,8 @@ expression
     | expression op=(AndAnd | OrOr) expression                  #binaryExpr
     | expression op=(And | Or | Caret
                     | LeftShift | RightShift) expression        #binaryExpr//done
-    | <assoc=right> expression Assign expression                #assignExpr//done, included in binaryExpr
-    | expression Dot expression                                 #memberExpr//done, included in binaryExpr
+    | <assoc=right> expression Assign expression                #binaryExpr//done, included in binaryExpr
+    | expression Dot expression                                 #binaryExpr//done, included in binaryExpr
 
     | expression Question expression Colon expression           #ternaryExpr//done
     ;
@@ -73,6 +74,7 @@ primary
     | literal
     | This
     | Null
+    | stringFormat
     ;
 
 literal
@@ -82,6 +84,18 @@ literal
     | StringLiteral
     | arrayLiteral
     ;
+
+arrayLiteral
+    : '{' (literal(','literal)*)? '}'
+    ;
+
+//Str : Quote ('\\n' | '\\\\' | '\\"' | [ !#-[\]-~])* Quote;
+fragment FormatStr : ('\\n' | '\\\\' | '\\"' | [ !#%-[\]-~] | '$$')*;
+Format_Plain : 'f"' FormatStr '"';
+Head : 'f"' FormatStr '$';
+Middle : '$' FormatStr '$';
+Tail : '$' FormatStr '"';
+stringFormat : Format_Plain | (Head expression? (Middle expression?)* Tail);
 
 Whitespace : [ \t]+ -> skip;
 
@@ -160,19 +174,7 @@ DecimalInteger
     ;
 
 StringLiteral
-: '"' ( PrintableChar | EscapeSequence )* '"'
-;
-
-fragment PrintableChar
-: [\u0020-\u007E] // Printable characters including space
-;
-
-fragment EscapeSequence
-: '\\' [n\\"] // \n, \\, \"
+: '"' ('\\n' | '\\\\' | '\\"' | [ !#-[\]-~])* '"'
 ;
 
 //NullLiteral : Null;
-
-arrayLiteral
-    : '{' (literal(','literal)*)? '}'
-    ;

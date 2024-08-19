@@ -1,15 +1,42 @@
-//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
-public class Main {
-    public static void main(String[] args) {
-        //TIP Press <shortcut actionId="ShowIntentionActions"/> with your caret at the highlighted text
-        // to see how IntelliJ IDEA suggests fixing it.
-        System.out.printf("Hello and welcome!");
+import java.io.FileInputStream;
+import java.io.InputStream;
 
-        for (int i = 1; i <= 5; i++) {
-            //TIP Press <shortcut actionId="Debug"/> to start debugging your code. We have set one <icon src="AllIcons.Debugger.Db_set_breakpoint"/> breakpoint
-            // for you, but you can always add more by pressing <shortcut actionId="ToggleLineBreakpoint"/>.
-            System.out.println("i = " + i);
+//import MIR.IRBuilder;
+import org.antlr.v4.runtime.CharStreams;
+import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.tree.ParseTree;
+import utils.Error;
+import AST.ProgramNode;
+import frontEnd.*;
+import parser.MxParser;
+import parser.MxLexer;
+import Util.MxErrorListener;
+import Util.Scope.GlobalScope;
+public class Main {
+    public static void main(String[] args) throws Exception {
+        InputStream input = System.in;
+        try{
+            GlobalScope globalScope = new GlobalScope();
+            MxLexer lexer = new MxLexer(CharStreams.fromStream(input));
+            lexer.removeErrorListeners();
+            lexer.addErrorListener(new MxErrorListener());
+            MxParser parser = new MxParser(new CommonTokenStream(lexer));
+            parser.removeErrorListeners();
+            parser.addErrorListener(new MxErrorListener());
+            MxParser.ProgramContext parseTreeRoot = parser.program();
+            ASTBuilder builder = new ASTBuilder();
+            ProgramNode root = (ProgramNode) builder.visit(parseTreeRoot);
+            SymbolCollector collector = new SymbolCollector(globalScope);
+            collector.visit(root);
+            SemanticChecker checker = new SemanticChecker(globalScope);
+            checker.visit(root);
+            IRBuilder irBuilder = new IRBuilder(globalScope);
+            irBuilder.visit(root);
+            System.out.println(irBuilder);
+        } catch (Error error) {
+            System.out.println(error.toString());
+            System.exit(1);
         }
+        System.exit(0);
     }
 }
