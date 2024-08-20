@@ -1,42 +1,28 @@
-import java.io.FileInputStream;
-import java.io.InputStream;
-
-//import MIR.IRBuilder;
+import Parser.MxLexer;
+import Parser.MxParser;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
-import utils.Error;
-import AST.ProgramNode;
-import frontEnd.*;
-import parser.MxParser;
-import parser.MxLexer;
-import Util.MxErrorListener;
-import Util.Scope.GlobalScope;
+
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.io.FileNotFoundException;
+
+
 public class Main {
     public static void main(String[] args) throws Exception {
+        //String name = "test.mx";
         InputStream input = System.in;
-        try{
-            GlobalScope globalScope = new GlobalScope();
+
+        try {
             MxLexer lexer = new MxLexer(CharStreams.fromStream(input));
-            lexer.removeErrorListeners();
-            lexer.addErrorListener(new MxErrorListener());
             MxParser parser = new MxParser(new CommonTokenStream(lexer));
             parser.removeErrorListeners();
-            parser.addErrorListener(new MxErrorListener());
-            MxParser.ProgramContext parseTreeRoot = parser.program();
-            ASTBuilder builder = new ASTBuilder();
-            ProgramNode root = (ProgramNode) builder.visit(parseTreeRoot);
-            SymbolCollector collector = new SymbolCollector(globalScope);
-            collector.visit(root);
-            SemanticChecker checker = new SemanticChecker(globalScope);
-            checker.visit(root);
-            IRBuilder irBuilder = new IRBuilder(globalScope);
-            irBuilder.visit(root);
-            System.out.println(irBuilder);
-        } catch (Error error) {
-            System.out.println(error.toString());
-            System.exit(1);
+            ParseTree parseTreeRoot = parser.program();
+
+        } catch (FileNotFoundException e) {
+            System.err.println("File not found");
+            throw new RuntimeException();
         }
-        System.exit(0);
     }
 }
