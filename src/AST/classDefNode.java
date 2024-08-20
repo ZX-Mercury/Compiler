@@ -10,7 +10,7 @@ public class classDefNode extends bodyNode {
     public ArrayList<funcDefNode> funcList;
     public ArrayList<varDefNode> varList;
 
-    public classDefNode(position pos, String name, suiteNode suite) {
+    public classDefNode(position pos, String name) {
         super(pos);
         this.name = name;
         this.funcList = new ArrayList<>();
@@ -19,6 +19,6 @@ public class classDefNode extends bodyNode {
 
     @Override
     public void accept(ASTVisitor visitor) {
-        visitor.visit(this);
+        //visitor.visit(this);
     }
 }

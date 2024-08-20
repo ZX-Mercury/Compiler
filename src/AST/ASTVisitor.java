@@ -1,6 +1,6 @@
 package AST;
 
-public interface ASTVisitor {
+public interface ASTVisitor {/*
     void visit(RootNode it);
     void visit(returnStmtNode it);
     void visit(ifStmtNode it);
@@ -37,4 +37,6 @@ public interface ASTVisitor {
     void visit(expressionListNode expressionListNode);
     void visit(newSizeNode newSizeNode);
     void visit(newVarExprNode newVarExprNode);
+
+    void visit(forInitNode forInitNode);*/
 }
