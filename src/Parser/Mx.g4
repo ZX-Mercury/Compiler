@@ -54,7 +54,7 @@ expression
     | <assoc=right> (PlusPlus | MinusMinus) expression          #preIncExpr//done
     | expression (PlusPlus | MinusMinus)                        #postIncExpr//done
     | <assoc=right> (Plus | Minus | Not | Tilde) expression     #unaryExpr//done
-    | <assoc=right> New newVar                                  #newExpr//TODO
+    | <assoc=right> New newVar                                  #newExpr//
 
     | expression op=(Plus | Minus | Mul | Div | Mod) expression #binaryExpr
     | expression op=(Equal | NotEqual) expression               #binaryExpr
@@ -63,10 +63,10 @@ expression
     | expression op=(AndAnd | OrOr) expression                  #binaryExpr
     | expression op=(And | Or | Caret
                     | LeftShift | RightShift) expression        #binaryExpr//done
-    | <assoc=right> expression Assign expression                #binaryExpr//done, included in binaryExpr
-    | expression Dot expression                                 #binaryExpr//done, included in binaryExpr
-
-    | expression Question expression Colon expression           #ternaryExpr//done
+    | <assoc=right> expression Assign expression                #assignExpr
+    | expression Dot Identifier                                 #memberExpr
+    | expression Dot Identifier '(' parameterList? ')'          #methodExpr
+    | <assoc=right> expression Question expression Colon expression           #ternaryExpr//done
     ;
 
 primary
@@ -89,7 +89,6 @@ arrayLiteral
     : '{' (literal(','literal)*)? '}'
     ;
 
-//Str : Quote ('\\n' | '\\\\' | '\\"' | [ !#-[\]-~])* Quote;
 fragment FormatStr : ('\\n' | '\\\\' | '\\"' | [ !#%-[\]-~] | '$$')*;
 Format_Plain : 'f"' FormatStr '"';
 Head : 'f"' FormatStr '$';
@@ -176,5 +175,3 @@ DecimalInteger
 StringLiteral
 : '"' ('\\n' | '\\\\' | '\\"' | [ !#-[\]-~])* '"'
 ;
-
-//NullLiteral : Null;
