@@ -14,7 +14,7 @@ public class ASTBuilder extends MxBaseVisitor<ASTNode> {
     @Override
     public ASTNode visitProgram (MxParser.ProgramContext ctx) {
         RootNode root = new RootNode(new position(ctx)) ;
-        ctx.body().forEach(v -> root.statements.add(visit(v)));
+        ctx.body().forEach(v -> root.parts.add(visit(v)));
         return root ;
     }
 
@@ -32,7 +32,7 @@ public class ASTBuilder extends MxBaseVisitor<ASTNode> {
         if (ctx.Identifier() != null) newVar.classID = ctx.Identifier().toString() ;
         else newVar.builtinType = (buildin_typenameNode) visit (ctx.buildin_typename()) ;
         if(ctx.expression()!=null) {
-            ctx.expression().forEach(v -> newVar.newSize.add((newSizeNode) visit(v)));
+            ctx.expression().forEach(v -> newVar.newSize.add((ExpressionNode) visit(v)));//newSizeNode
         }
         if(ctx.arrayLiteral()!=null) newVar.arrayLiteral = (arrayLiteralNode) visit(ctx.arrayLiteral());
         return newVar;
@@ -48,8 +48,8 @@ public class ASTBuilder extends MxBaseVisitor<ASTNode> {
 
     @Override
     public ASTNode visitVarDefStmt (MxParser.VarDefStmtContext ctx) {
-        return visit(ctx.varDef());
-//        return new varDefNode(new position(ctx), (varTypeNode) visit(ctx.varDef())) ;
+//        return visit(ctx.varDef());
+        return new varDefStmtNode(new position(ctx), (varDefNode) visit(ctx.varDef())) ;
     }
 
     @Override
@@ -113,7 +113,7 @@ public class ASTBuilder extends MxBaseVisitor<ASTNode> {
     public ASTNode visitClassDef (MxParser.ClassDefContext ctx) {
         classDefNode classDef = new classDefNode(new position(ctx), ctx.Identifier().toString()) ;
         if (ctx.classConstruct() != null) classDef.constructor = (classConstructNode) visit (ctx.classConstruct()) ;
-        ctx.varDefStmt().forEach(v -> classDef.varList.add ((varDefNode) visit (v)));
+        ctx.varDefStmt().forEach(v -> classDef.varList.add ((varDefStmtNode) visit (v)));
         ctx.funcDef().forEach(v -> classDef.funcList.add((funcDefNode) visit (v)));
         return classDef ;
     }
@@ -128,7 +128,7 @@ public class ASTBuilder extends MxBaseVisitor<ASTNode> {
     @Override
     public ASTNode visitSuite(MxParser.SuiteContext ctx) {
         suiteNode suite = new suiteNode(new position(ctx)) ;
-        ctx.statement().forEach(v -> suite.statementNodes.add((StmtNode) visit(v)));
+        ctx.statement().forEach(v -> suite.statementNodes.add((ASTNode) visit(v)));
         return suite ;
     }
 
@@ -186,11 +186,12 @@ public class ASTBuilder extends MxBaseVisitor<ASTNode> {
 
     @Override
     public ASTNode visitStatement(MxParser.StatementContext ctx) {
-        if (ctx.varDefStmt() != null) return visit (ctx.varDefStmt()) ;
+        if (ctx.suite()!=null) return visit(ctx.suite());
+        else if (ctx.varDefStmt() != null) return visit (ctx.varDefStmt()) ;
         else if (ctx.ifStmt() != null) return visit (ctx.ifStmt()) ;
         else if (ctx.loopStmt() != null) return visit (ctx.loopStmt()) ;
         else if (ctx.controlStmt() != null) return visit (ctx.controlStmt()) ;
-        else if (ctx.expression() != null) return visit (ctx.expression()) ;
+        else if (ctx.expression() != null) return new pureExprStmtNode(new position(ctx),(ExpressionNode) visit (ctx.expression())) ;
         else if (ctx.Semi()!=null) return null ;
         else throw new RuntimeException() ;
     }

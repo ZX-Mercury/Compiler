@@ -44,4 +44,6 @@ public interface ASTVisitor {
 
     void visit(arrayLiteralNode arrayLiteralNode);
     void visit(FmtstringNode fmtstringNode);
+
+    void visit(varDefStmtNode varDefStmtNode);
 }

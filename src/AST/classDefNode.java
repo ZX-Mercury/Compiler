@@ -8,7 +8,7 @@ public class classDefNode extends bodyNode {
     public String name;
     public classConstructNode constructor;
     public ArrayList<funcDefNode> funcList;
-    public ArrayList<varDefNode> varList;
+    public ArrayList<varDefStmtNode> varList;
 
     public classDefNode(position pos, String name) {
         super(pos);

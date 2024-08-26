@@ -7,7 +7,7 @@ import java.util.ArrayList;
 public class newVarExprNode extends ExpressionNode {
     public String classID ;
     public buildin_typenameNode builtinType ;
-    public ArrayList<newSizeNode> newSize ;
+    public ArrayList<ExpressionNode> newSize ;//newSizeNode
     public arrayLiteralNode arrayLiteral ;
 
     public newVarExprNode (position pos, String classID, buildin_typenameNode builtinType) {

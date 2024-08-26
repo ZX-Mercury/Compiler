@@ -5,11 +5,11 @@ import java.util.ArrayList;
 import Util.position;
 
 public class RootNode extends ASTNode {
-    public ArrayList<ASTNode> statements ;
+    public ArrayList<ASTNode> parts;
 
     public RootNode (position pos) {
         super (pos) ;
-        statements = new ArrayList<>() ;
+        parts = new ArrayList<>() ;
     }
 
     @Override

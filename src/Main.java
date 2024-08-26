@@ -16,8 +16,10 @@ import java.io.PrintStream;
 
 public class Main {
     public static void main(String[] args) throws Exception {
-        //String name = "test.mx"; InputStream input = new FileInputStream(name);
-        InputStream input = System.in;
+        String name = "testcases/sema/basic-package/basic-65.mx";//7,8,23,38,40,45,46,48,57,61
+        //String name = "test.mx";
+        InputStream input = new FileInputStream(name);
+        //InputStream input = System.in;
 
         try {
             RootNode ASTRoot;
