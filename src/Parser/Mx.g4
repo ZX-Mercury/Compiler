@@ -3,7 +3,7 @@ grammar Mx;
 program: body* EOF;
 body : (varDefStmt | funcDef | classDef);
 
-newVar : (buildin_typename | Identifier) ('(' ')' | ('[' expression? ']')*) ;
+newVar : (buildin_typename | Identifier) ('(' ')' | ('[' arraySize=expression? ']')*) arrayLiteral?;
 
 varDef : varType varDeclare (',' varDeclare)*;
 varDefStmt : varDef ';';//done
@@ -24,7 +24,8 @@ suite : '{' statement* '}';
 ifStmt : If '(' expression ')' trueStmt=statement (Else falseStmt=statement)?;
 
 loopStmt
-    : For '(' (varDef | expression)? ';' expression? ';' expression? ')' statement #forStmt
+    : For '(' init=varDef ';' cond=expression? ';' step=expression? ')' statement #forDefStmt
+    | For '(' init=expression? ';' cond=expression? ';' step=expression? ')' statement #forExpStmt
     | While '(' expression ')' statement #whileStmt
     ;
 
@@ -46,15 +47,15 @@ statement
 
 expressionList : '(' (expression (',' expression)*)? ')' ;
 expression
-    : primary                                                   #atomExpr//done
+    : primary                                                   #atomExpr
     | '(' expression ')'                                        #parenExpr
-    | expression expressionList                                 #callExpr//done
-    | expression '[' expression ']'                             #arrayExpr//done
+    | expression expressionList                                 #callExpr
+    | expression '[' expression ']'                             #arrayExpr
 
     | <assoc=right> (PlusPlus | MinusMinus) expression          #preIncExpr//done
     | expression (PlusPlus | MinusMinus)                        #postIncExpr//done
     | <assoc=right> (Plus | Minus | Not | Tilde) expression     #unaryExpr//done
-    | <assoc=right> New newVar                                  #newExpr//
+    | <assoc=right> New newVar                                  #newExpr
 
     | expression op=(Plus | Minus | Mul | Div | Mod) expression #binaryExpr
     | expression op=(Equal | NotEqual) expression               #binaryExpr
@@ -62,10 +63,10 @@ expression
                     | Greater | GreaterEqual) expression        #binaryExpr
     | expression op=(AndAnd | OrOr) expression                  #binaryExpr
     | expression op=(And | Or | Caret
-                    | LeftShift | RightShift) expression        #binaryExpr//done
-    | <assoc=right> expression Assign expression                #assignExpr
+                    | LeftShift | RightShift) expression        #binaryExpr//partly done
+    | <assoc=right> expression Assign expression                #assignExpr//done
     | expression Dot Identifier                                 #memberExpr
-    | expression Dot Identifier '(' parameterList? ')'          #methodExpr
+    //| expression Dot Identifier '(' expressionList? ')'         #methodExpr
     | <assoc=right> expression Question expression Colon expression           #ternaryExpr//done
     ;
 
@@ -135,7 +136,7 @@ Question : '?'; Colon : ':';
 
 // 2. keywords
 Void : 'void'; Bool : 'bool'; Int : 'int'; String : 'string';
-New : 'new'; Class : 'class'; Null : 'null'; fragment True : 'true'; //use 'fragment', otherwise boolLiteral will be covered.
+New : 'new'; Class : 'class'; Null : 'null'; fragment True : 'true'; //use 'fragment', otherwise BoolLiteral will be covered.
 fragment False : 'false'; This : 'this'; If : 'if'; Else : 'else';
 For : 'for'; While : 'while'; Break : 'break'; Continue : 'continue';
 Return : 'return';

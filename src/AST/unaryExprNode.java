@@ -2,17 +2,17 @@ package AST;
 
 import Util.position;
 
-public class prefixExprNode extends ExpressionNode {
-    public enum prefixOperator {
+public class unaryExprNode extends ExpressionNode {
+    public enum unaryOperator {
         Plus, Minus, Not, Tilde ;
     }
 
-    public prefixOperator prefixOp ;
+    public unaryOperator unaryOp ;
     public ExpressionNode expression ;
 
-    public prefixExprNode (position pos, prefixOperator prefixOp, ExpressionNode expression) {
+    public unaryExprNode(position pos, unaryOperator unaryOp, ExpressionNode expression) {
         super (pos) ;
-        this.prefixOp = prefixOp ;
+        this.unaryOp = unaryOp ;
         this.expression = expression ;
     }
 

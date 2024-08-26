@@ -4,7 +4,7 @@ import Util.position;
 
 public class atomExprNode extends ExpressionNode {
     public enum primaryType {
-        This, Null, Int, Bool, String, Identifier
+        This, Null, Int, Bool, String, Identifier, Fmtstring
     }
 
     public primaryType type ;

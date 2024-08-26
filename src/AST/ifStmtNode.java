@@ -2,7 +2,7 @@ package AST;
 
 import Util.position;
 
-public class ifStmtNode extends ASTNode {
+public class ifStmtNode extends StmtNode {
     public ExpressionNode expression ;
     public StmtNode trueStatement, falseStatement ;
 

@@ -1,3 +1,5 @@
+import AST.RootNode;
+import FrontEnd.ASTBuilder;
 import Parser.MxLexer;
 import Parser.MxParser;
 import Util.MxErrorListener;
@@ -18,6 +20,7 @@ public class Main {
         //InputStream input = System.in;
 
         try {
+            RootNode ASTRoot;
             MxLexer lexer = new MxLexer(CharStreams.fromStream(input));
             lexer.removeErrorListeners();
             lexer.addErrorListener(new MxErrorListener());
@@ -25,6 +28,8 @@ public class Main {
             parser.removeErrorListeners();
             parser.addErrorListener(new MxErrorListener());
             ParseTree parseTreeRoot = parser.program();
+            ASTBuilder astBuilder = new ASTBuilder();
+            ASTRoot = (RootNode) astBuilder.visit(parseTreeRoot);
         } catch (error er) {
             System.err.println(er.toString());
             throw new RuntimeException();

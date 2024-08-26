@@ -1,3 +1,4 @@
+/*
 package AST;
 
 import Util.position;
@@ -21,4 +22,4 @@ public class forStmtNode extends LoopStmtNode {
     public void accept (ASTVisitor visitor) {
         visitor.visit (this) ;
     }
-}
+}*/

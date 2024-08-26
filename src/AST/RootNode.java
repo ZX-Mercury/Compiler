@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import Util.position;
 
 public class RootNode extends ASTNode {
-    public ArrayList<bodyNode> statements ;
+    public ArrayList<ASTNode> statements ;
 
     public RootNode (position pos) {
         super (pos) ;
