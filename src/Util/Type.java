@@ -6,7 +6,7 @@ public class Type {
     public enum basicType {
         Int, Bool, String, Void, Class, Function, This, Null
     }
-    public basicType type ;
+    public basicType btype ;
     public String Identifier ;
     public int dim ;
     public boolean isLeftValue ;
@@ -14,20 +14,20 @@ public class Type {
     public ArrayList<Type> functionParameters ;
 
     public Type (basicType _type, int _dim, boolean _isLeftValue) {
-        type = _type ;
+        btype = _type ;
         dim = _dim ;
         isLeftValue = _isLeftValue ;
     }
 
     public Type (String _identifier, int _dim, boolean _isLeftValue) { //class
-        type = basicType.Class ;
+        btype = basicType.Class ;
         Identifier = _identifier ;
         dim = _dim ;
         isLeftValue = _isLeftValue ;
     }
 
     public Type (String _identifier, Type returnType, ArrayList<Type> parameters) { //function
-        type = basicType.Function ;
+        btype = basicType.Function ;
         Identifier = _identifier ;
         functionReturnType = returnType ;
         functionParameters = parameters ;
@@ -36,7 +36,7 @@ public class Type {
     }
 
     public Type (Type _type) {
-        type = _type.type ;
+        btype = _type.btype ;
         Identifier = _type.Identifier ;
         dim = _type.dim ;
         isLeftValue = _type.isLeftValue ;

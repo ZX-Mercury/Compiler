@@ -32,7 +32,7 @@ public interface ASTVisitor {
     void visit(expressionListNode expressionListNode);
     void visit(newSizeNode newSizeNode);
     void visit(newVarExprNode newVarExprNode);
-    void visit(forInitNode forInitNode);
+    //void visit(forInitNode forInitNode);
     void visit(assignExprNode assignExprNode);
     void visit(memberExprNode memberExprNode);
     void visit(forDefStmtNode forDefStmtNode);
@@ -41,9 +41,7 @@ public interface ASTVisitor {
     void visit(boolLiteralNode boolLiteralNode);
     void visit(nullLiteralNode nullLiteralNode);
     void visit(stringLiteralNode stringLiteralNode);
-
     void visit(arrayLiteralNode arrayLiteralNode);
     void visit(FmtstringNode fmtstringNode);
-
     void visit(varDefStmtNode varDefStmtNode);
 }

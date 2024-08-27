@@ -143,7 +143,7 @@ public class ASTBuilder extends MxBaseVisitor<ASTNode> {
     @Override
     public ASTNode visitForDefStmt(MxParser.ForDefStmtContext ctx) {
         varDefNode varDef = (varDefNode) visit(ctx.varDef()) ;
-        ExpressionNode condition = ctx.cond == null ? null : (ExpressionNode) visit(ctx.cond) ,
+        ExpressionNode condition = (ExpressionNode) visit(ctx.cond) ,
                 step = ctx.step == null ? null : (ExpressionNode) visit(ctx.step) ;
 
         StmtNode statement = (StmtNode) visit(ctx.statement()) ;
@@ -153,7 +153,7 @@ public class ASTBuilder extends MxBaseVisitor<ASTNode> {
     @Override
     public ASTNode visitForExpStmt (MxParser.ForExpStmtContext ctx) {
         ExpressionNode init = ctx.init==null? null : (ExpressionNode) visit(ctx.init),
-                       condition = ctx.cond==null? null : (ExpressionNode) visit(ctx.cond),
+                       condition = (ExpressionNode) visit(ctx.cond),
                        step = ctx.step==null? null : (ExpressionNode) visit(ctx.step) ;
         StmtNode statement = (StmtNode) visit(ctx.statement()) ;
         return new forExpStmtNode(new position(ctx), init, condition, step, statement) ;
