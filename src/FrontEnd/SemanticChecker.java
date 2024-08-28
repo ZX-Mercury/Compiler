@@ -75,16 +75,6 @@ public class SemanticChecker implements ASTVisitor{
         it.statement.accept(this);
         currentScope = currentScope.parentScope();
     }
-    @Override public void visit(binaryExprNode it){
-        /*it.lhs.accept(this);
-        it.rhs.accept(this);
-        if(it.lhs.type!=it.rhs.type){
-            throw new semanticError("Semantic Error: type not match", it.pos);
-        }
-        if(lhs不可被赋值){
-            throw new semanticError("Semantic Error: lhs is not assignable", it.pos);
-        }*/
-    }
     @Override public void visit(suiteNode it){
         if (!it.statementNodes.isEmpty()) {
             currentScope = new Scope(currentScope);
@@ -114,32 +104,107 @@ public class SemanticChecker implements ASTVisitor{
         currentScope = currentScope.parentScope();
     }
     @Override public void visit(expressionListNode it){}
-    @Override public void visit(newSizeNode it){}
-    @Override public void visit(atomExprNode it){}
-    @Override public void visit(parenExprNode it){}
-    @Override public void visit(newVarExprNode it){}
+    @Override public void visit(newSizeNode it){}//maybe not needed
+    @Override public void visit(atomExprNode it){
+        it.checkType();
+    }
+    @Override public void visit(parenExprNode it){
+        it.expr.accept(this);
+        it.checkType();
+    }
+    @Override public void visit(newVarExprNode it){
+        it.builtinType.accept(this);
+        for(ExpressionNode expr : it.newSize){
+            expr.accept(this);
+        }
+        it.arrayLiteral.accept(this);
+        it.checkType();
+    }
     @Override public void visit(assignExprNode it){
         it.lhs.accept(this);
         it.rhs.accept(this);
         if(it.lhs.type!=it.rhs.type){
             throw new semanticError("Semantic Error: type not match", it.pos);
         }
-        /*if(lhs不可被赋值){
-            throw new semanticError("Semantic Error: lhs is not assignable", it.pos);
+        //TODO: new 数组的语法糖
+        it.checkType();
+    }
+    @Override public void visit(binaryExprNode it){
+        it.lhs.accept(this);
+        it.rhs.accept(this);
+        it.checkType();
+    }
+    @Override public void visit(memberExprNode it){/*
+        node.class_.accept(this);
+        if (node.class_ instanceof ArrayLiteralNode) {
+            if (!node.member_.equals("size")) {
+                System.out.println("Undefined Identifier");
+                throw new SemanticError("Undefined Symbol Error", node.pos_);
+            }
+            node.funcType_ = new FuncType(new Type("int"));
+            node.isLeftValue_ = false;
+            return;
+        }
+        if (node.class_.type_.isArray_) {
+            if (!node.member_.equals("size")) {
+                System.out.println("Undefined Identifier");
+                throw new SemanticError("Undefined Symbol Error", node.pos_);
+            }
+            node.funcType_ = new FuncType(new Type("int"));
+            node.isLeftValue_ = false;
+        }
+        else {
+            ClassType classType = gScope_.getClassType(node.class_.type_.name_);
+            FuncType funcType = classType.funcMap_.get(node.member_);
+            Type varType = classType.varMap_.get(node.member_);
+            if (funcType != null) {
+                node.funcType_ = funcType;
+                node.isLeftValue_ = false;
+                return;
+            }
+            if (varType != null) {
+                node.type_ = varType;
+                return;
+            }
+            System.out.println("Undefined Identifier");
+            throw new SemanticError("Undefined Symbol Error", node.pos_);
         }*/
     }
-    @Override public void visit(memberExprNode it){}
     @Override public void visit(callExprNode it){}
     @Override public void visit(arrayExprNode it){}
-    @Override public void visit(preIncExprNode it){}
-    @Override public void visit(postIncExprNode it){}
-    @Override public void visit(unaryExprNode it){}
-    @Override public void visit(ternaryExprNode it){}
-    @Override public void visit(intLiteralNode it){}
-    @Override public void visit(boolLiteralNode it){}
-    @Override public void visit(nullLiteralNode it){}
-    @Override public void visit(stringLiteralNode it){}
-    @Override public void visit(arrayLiteralNode it){}
-    @Override public void visit(FmtstringNode it){}
+    @Override public void visit(preIncExprNode it){
+        it.expression.accept(this);
+        it.checkType();
+    }
+    @Override public void visit(postIncExprNode it){
+        it.expression.accept(this);
+        it.checkType();
+    }
+    @Override public void visit(unaryExprNode it){
+        it.expression.accept(this);
+        it.checkType();
+    }
+    @Override public void visit(ternaryExprNode it){
+        it.condition.accept(this);
+        it.trueExpr.accept(this);
+        it.falseExpr.accept(this);
+        it.checkType();
+    }
+    @Override public void visit(intLiteralNode it){return;}
+    @Override public void visit(boolLiteralNode it){return;}
+    @Override public void visit(nullLiteralNode it){return;}
+    @Override public void visit(stringLiteralNode it){return;}
+    @Override public void visit(arrayLiteralNode it){
+        for(ExpressionNode expr : it.elements){
+            expr.accept(this);
+        }
+        it.checkType();
+    }
+    @Override public void visit(FmtstringNode it){
+        for(ExpressionNode expr : it.expr){
+            expr.accept(this);
+        }
+        it.checkType();
+    }
     @Override public void visit(varDefStmtNode it){}
 }

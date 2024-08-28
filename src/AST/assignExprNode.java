@@ -21,6 +21,9 @@ public class assignExprNode extends ExpressionNode {
         if(lhs.type.dim != rhs.type.dim){
             throw new semanticError("Semantic Error: dimension not match", pos);
         }
+        if(!lhs.type.isLeftValue){
+            throw new semanticError("Semantic Error: lhs is not assignable", pos);
+        }
         type = lhs.type;
     }
     @Override
