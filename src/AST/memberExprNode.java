@@ -13,6 +13,10 @@ public class memberExprNode extends ExpressionNode {
     }
 
     @Override
+    public void checkType () {
+        //TODO: type = expr.type.getMemberType(member);
+    }
+    @Override
     public void accept (ASTVisitor visitor) {
         visitor.visit (this) ;
     }

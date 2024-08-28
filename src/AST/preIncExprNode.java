@@ -1,6 +1,8 @@
 package AST;
 
+import Util.Type;
 import Util.position;
+import Util.error.semanticError;
 
 public class preIncExprNode extends ExpressionNode {
     public enum preIncOperator {
@@ -16,6 +18,13 @@ public class preIncExprNode extends ExpressionNode {
         this.expression = expression ;
     }
 
+    @Override
+    public void checkType () {
+        if (expression.type.btype != Type.basicType.Int) {
+            throw new semanticError ("Semantic Error: integer expected", pos) ;
+        }
+        type = new Type (Type.basicType.Int, 0, false) ;
+    }
     @Override
     public void accept (ASTVisitor visitor) {
         visitor.visit (this) ;

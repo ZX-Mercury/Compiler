@@ -1,6 +1,8 @@
 package AST;
 
 import Util.position;
+import Util.Type;
+import Util.error.semanticError;
 
 public class assignExprNode extends ExpressionNode {
     public ExpressionNode lhs, rhs;
@@ -11,6 +13,16 @@ public class assignExprNode extends ExpressionNode {
         this.rhs = rhs;
     }
 
+    @Override
+    public void checkType() {
+        if(!lhs.type.equals(rhs.type)){
+            throw new semanticError("Semantic Error: type not match", pos);
+        }
+        if(lhs.type.dim != rhs.type.dim){
+            throw new semanticError("Semantic Error: dimension not match", pos);
+        }
+        type = lhs.type;
+    }
     @Override
     public void accept(ASTVisitor visitor) {
         visitor.visit(this);

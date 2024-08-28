@@ -1,4 +1,5 @@
 package AST;
+import Util.Type;
 import Util.position;
 
 public class callExprNode extends ExpressionNode {
@@ -9,6 +10,11 @@ public class callExprNode extends ExpressionNode {
         super (pos) ;
         this.functionIdentifier = functionIdentifier ;
         this.expressionList = expressionList ;
+    }
+
+    @Override
+    public void checkType() {
+        type = functionIdentifier.type ;
     }
 
     @Override

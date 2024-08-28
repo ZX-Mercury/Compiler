@@ -228,7 +228,6 @@ public class ASTBuilder extends MxBaseVisitor<ASTNode> {
 
     @Override
     public ASTNode visitBinaryExpr (MxParser.BinaryExprContext ctx) {
-        //TODO: separate binaryOp (binOp / cmpOp)
         binaryOperator binaryOp = null ;
         if (ctx.Plus() != null) binaryOp = binaryExprNode.binaryOperator.Plus ;
         else if (ctx.Minus() != null) binaryOp = binaryExprNode.binaryOperator.Minus ;

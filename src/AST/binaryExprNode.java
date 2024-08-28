@@ -21,7 +21,7 @@ public class binaryExprNode extends ExpressionNode {
         this.rhs = rhs ;
     }
 
-    //@Override
+    @Override
     public void checkType(){
         if(binaryOp.equals(binaryOperator.Plus)){
             if(lhs.type.btype.equals(Type.basicType.Int) && rhs.type.btype.equals(Type.basicType.Int)){

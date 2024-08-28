@@ -50,3 +50,18 @@ public class Type {
             functionParameters = null ;
     }
 }
+/*
+public boolean cmptype (Type a, Type b) {
+    if (a.dim != b.dim) return false ;
+    if (a.btype != b.btype) return false ;
+    if (a.btype == basicType.Class) {
+        if (!a.Identifier.equals (b.Identifier)) return false ;
+    }
+    if (a.btype == basicType.Function) {
+        if (!a.functionReturnType.cmptype (b.functionReturnType)) return false ;
+        if (a.functionParameters.size() != b.functionParameters.size()) return false ;
+        for (int i = 0; i < a.functionParameters.size(); ++ i)
+            if (!a.functionParameters.get(i).cmptype (b.functionParameters.get(i))) return false ;
+    }
+    return true ;
+}*/

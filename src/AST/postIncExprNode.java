@@ -1,6 +1,8 @@
 package AST;
 
 import Util.position;
+import Util.Type;
+import Util.error.semanticError;
 
 public class postIncExprNode extends ExpressionNode {
     public enum postIncOperator {
@@ -14,6 +16,14 @@ public class postIncExprNode extends ExpressionNode {
         super (pos) ;
         this.postIncOp = postIncOp ;
         this.expression = expression ;
+    }
+
+    @Override
+    public void checkType () {
+        if (expression.type.btype != Type.basicType.Int) {
+            throw new semanticError ("Semantic Error: integer expected", pos) ;
+        }
+        type = new Type (Type.basicType.Int, 0, false) ;
     }
 
     @Override

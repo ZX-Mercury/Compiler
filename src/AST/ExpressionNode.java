@@ -8,4 +8,6 @@ abstract public class ExpressionNode extends ASTNode {
     public ExpressionNode (position pos) {
         super (pos) ;
     }
+
+    public void checkType(){}
 }

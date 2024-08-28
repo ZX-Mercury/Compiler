@@ -1,6 +1,8 @@
 package AST;
 
 import Util.position;
+import Util.Type;
+import Util.error.semanticError;
 
 import java.util.ArrayList;
 
@@ -15,6 +17,16 @@ public class newVarExprNode extends ExpressionNode {
         this.classID = classID ;
         this.builtinType = builtinType ;
         newSize = new ArrayList<>();
+    }
+
+    @Override
+    public void checkType () {
+        if (builtinType != null) {//int, bool, string etc.
+            type = new Type (builtinType.bType, newSize.size()-1, false) ;
+        }
+        else { //class
+            type = new Type (classID, newSize.size()-1, false) ;
+        }
     }
 
     @Override

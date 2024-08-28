@@ -11,6 +11,11 @@ public class parenExprNode extends ExpressionNode {
     }
 
     @Override
+    public void checkType() {
+        type = expr.type;
+    }
+
+    @Override
     public void accept(ASTVisitor visitor) {
         visitor.visit(this);
     }
