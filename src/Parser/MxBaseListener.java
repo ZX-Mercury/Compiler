@@ -492,6 +492,18 @@ public class MxBaseListener implements MxListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitStringFormat(MxParser.StringFormatContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterBoolLiteral(MxParser.BoolLiteralContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitBoolLiteral(MxParser.BoolLiteralContext ctx) { }
 
 	/**
 	 * {@inheritDoc}

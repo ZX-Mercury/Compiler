@@ -80,7 +80,7 @@ primary
 
 literal
     : DecimalInteger
-    | BoolLiteral
+    | boolLiteral
     | Null
     | StringLiteral
     | arrayLiteral
@@ -136,8 +136,9 @@ Question : '?'; Colon : ':';
 
 // 2. keywords
 Void : 'void'; Bool : 'bool'; Int : 'int'; String : 'string';
-New : 'new'; Class : 'class'; Null : 'null'; fragment True : 'true'; //use 'fragment', otherwise BoolLiteral will be covered.
-fragment False : 'false'; This : 'this'; If : 'if'; Else : 'else';
+New : 'new'; Class : 'class'; Null : 'null';
+True : 'true'; //use 'fragment', otherwise BoolLiteral will be covered.
+False : 'false'; This : 'this'; If : 'if'; Else : 'else';
 For : 'for'; While : 'while'; Break : 'break'; Continue : 'continue';
 Return : 'return';
 
@@ -166,7 +167,7 @@ LineComment
 // 6. Literals
 
 // Logical constants
-BoolLiteral : True | False;
+boolLiteral : True | False;
 
 DecimalInteger
     : [1-9] [0-9]*

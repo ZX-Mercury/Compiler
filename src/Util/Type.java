@@ -7,7 +7,7 @@ public class Type {
         Int, Bool, String, Void, Class, Function, This, Null
     }
     public basicType btype ;
-    public String Identifier ;
+    public String Identifier ;//class name
     public int dim ;
     public boolean isLeftValue ;
     public Type functionReturnType ;
@@ -26,14 +26,21 @@ public class Type {
         isLeftValue = _isLeftValue ;
     }
 
-    public Type (String _identifier, Type returnType, ArrayList<Type> parameters) { //function
+    public Type (Type returnType, ArrayList<Type> parameters) { //function
+        btype = basicType.Function ;
+        functionReturnType = returnType ;
+        functionParameters = parameters ;
+        dim = 0 ;//or returnType.dim?
+        isLeftValue = false ;
+    }
+    /*public Type (String _identifier, Type returnType, ArrayList<Type> parameters) { //function
         btype = basicType.Function ;
         Identifier = _identifier ;
         functionReturnType = returnType ;
         functionParameters = parameters ;
         dim = 0 ;
         isLeftValue = false ;
-    }
+    }*/
 
     public Type (Type _type) {
         btype = _type.btype ;
@@ -49,19 +56,6 @@ public class Type {
         else
             functionParameters = null ;
     }
+
 }
-/*
-public boolean cmptype (Type a, Type b) {
-    if (a.dim != b.dim) return false ;
-    if (a.btype != b.btype) return false ;
-    if (a.btype == basicType.Class) {
-        if (!a.Identifier.equals (b.Identifier)) return false ;
-    }
-    if (a.btype == basicType.Function) {
-        if (!a.functionReturnType.cmptype (b.functionReturnType)) return false ;
-        if (a.functionParameters.size() != b.functionParameters.size()) return false ;
-        for (int i = 0; i < a.functionParameters.size(); ++ i)
-            if (!a.functionParameters.get(i).cmptype (b.functionParameters.get(i))) return false ;
-    }
-    return true ;
-}*/
+

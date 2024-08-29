@@ -327,7 +327,7 @@ public class ASTBuilder extends MxBaseVisitor<ASTNode> {
     @Override
     public ASTNode visitLiteral(MxParser.LiteralContext ctx) {
         if(ctx.DecimalInteger() != null) return new intLiteralNode(new position(ctx), Integer.parseInt(ctx.DecimalInteger().toString()));
-        else if(ctx.BoolLiteral() != null) return new boolLiteralNode(new position(ctx), Boolean.parseBoolean(ctx.BoolLiteral().toString()));
+        else if(ctx.boolLiteral() != null) return new boolLiteralNode(new position(ctx), Boolean.parseBoolean(ctx.boolLiteral().toString()));
         else if(ctx.Null() != null) return new nullLiteralNode(new position(ctx));
         else if(ctx.StringLiteral() != null) return new stringLiteralNode(new position(ctx), ctx.StringLiteral().toString());
         else if(ctx.arrayLiteral()!=null) return visit(ctx.arrayLiteral());

@@ -25,7 +25,7 @@ public class binaryExprNode extends ExpressionNode {
     public void checkType(){
         if(binaryOp.equals(binaryOperator.Plus)){
             if(lhs.type.btype.equals(Type.basicType.Int) && rhs.type.btype.equals(Type.basicType.Int)){
-                type = new Type(Type.basicType.Bool,0,false);
+                type = new Type(Type.basicType.Int,0,false);
             }
             else if(lhs.type.btype.equals(Type.basicType.String) && rhs.type.btype.equals(Type.basicType.String)){
                 type = new Type(Type.basicType.String,0,false);

@@ -3,6 +3,10 @@ package AST;
 import Util.position;
 import Util.Type;
 import Util.error.semanticError;
+import Util.typeCmp;
+import jdk.jshell.execution.Util;
+
+import java.util.Objects;
 
 public class assignExprNode extends ExpressionNode {
     public ExpressionNode lhs, rhs;
@@ -15,7 +19,7 @@ public class assignExprNode extends ExpressionNode {
 
     @Override
     public void checkType() {
-        if(!lhs.type.equals(rhs.type)){
+        if(!typeCmp.cmptype(lhs.type,rhs.type)){
             throw new semanticError("Semantic Error: type not match", pos);
         }
         if(lhs.type.dim != rhs.type.dim){

@@ -443,4 +443,14 @@ public interface MxListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitStringFormat(MxParser.StringFormatContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link MxParser#boolLiteral}.
+	 * @param ctx the parse tree
+	 */
+	void enterBoolLiteral(MxParser.BoolLiteralContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link MxParser#boolLiteral}.
+	 * @param ctx the parse tree
+	 */
+	void exitBoolLiteral(MxParser.BoolLiteralContext ctx);
 }

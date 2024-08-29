@@ -268,4 +268,10 @@ public interface MxVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitStringFormat(MxParser.StringFormatContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link MxParser#boolLiteral}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitBoolLiteral(MxParser.BoolLiteralContext ctx);
 }
