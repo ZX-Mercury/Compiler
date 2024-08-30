@@ -1,3 +1,4 @@
+/*
 package AST;
 
 import Util.position;
@@ -15,4 +16,4 @@ public class buildin_typenameNode extends ASTNode {
     public void accept (ASTVisitor visitor) {
         visitor.visit (this) ;
     }
-}
+}*/

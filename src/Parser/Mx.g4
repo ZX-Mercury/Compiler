@@ -3,18 +3,14 @@ grammar Mx;
 program: body* EOF;
 body : (varDefStmt | funcDef | classDef);
 
-newVar : (buildin_typename | Identifier) ('(' ')' | ('[' arraySize=expression? ']')*) arrayLiteral?;
-
 varDef : varType varDeclare (',' varDeclare)*;
 varDefStmt : varDef ';';//done
-buildin_typename : Int | Bool | String;//done
-varType : (buildin_typename | Identifier) ('[' ']')*;//done
+varType : btp=(Int | Bool | String | Identifier) ('[' ']')*;//done
 varDeclare : Identifier (Assign expression)?;//done
 
 functypename : varType | Void;//done
 funcDef : functypename Identifier '(' parameterList? ')' suite;//done
-parameterList : parameter (',' parameter)*;//done
-parameter : varType Identifier;//done
+parameterList : varType Identifier (',' varType Identifier)*;//done
 
 classDef : Class Identifier '{' (varDefStmt | funcDef)* classConstruct? (varDefStmt | funcDef)* '}' ';';
 classConstruct : Identifier '(' ')' suite;//done
@@ -45,17 +41,18 @@ statement
     | ';'
     ;
 
-expressionList : '(' (expression (',' expression)*)? ')' ;
 expression
     : primary                                                   #atomExpr
     | '(' expression ')'                                        #parenExpr
-    | expression expressionList                                 #callExpr
+    | expression '(' (expression (',' expression)*)? ')'        #callExpr
     | expression '[' expression ']'                             #arrayExpr
 
     | <assoc=right> (PlusPlus | MinusMinus) expression          #preIncExpr//done
     | expression (PlusPlus | MinusMinus)                        #postIncExpr//done
     | <assoc=right> (Plus | Minus | Not | Tilde) expression     #unaryExpr//done
-    | <assoc=right> New newVar                                  #newExpr
+    | <assoc=right> New tp=(Int | Bool | String | Identifier) '(' ')'   #newVarExpr
+    | <assoc=right> New tp=(Int | Bool | String | Identifier)
+            ('[' arraySize=expression? ']')* arrayLiteral?      #newArrayExpr
 
     | expression op=(Plus | Minus | Mul | Div | Mod) expression #binaryExpr
     | expression op=(Equal | NotEqual) expression               #binaryExpr
@@ -66,7 +63,6 @@ expression
                     | LeftShift | RightShift) expression        #binaryExpr//partly done
     | <assoc=right> expression Assign expression                #assignExpr//done
     | expression Dot Identifier                                 #memberExpr
-    //| expression Dot Identifier '(' expressionList? ')'         #methodExpr
     | <assoc=right> expression Question expression Colon expression           #ternaryExpr//done
     ;
 

@@ -1,13 +1,16 @@
+
 package Util.Scope;
 
 import AST.*;
 
+import AST.Definition.classDefNode;
+import AST.Definition.funcDefNode;
+import AST.Definition.funcDefParameterNode;
+import AST.Definition.parameterNode;
 import Util.Type;
 import Util.error.semanticError;
 import Util.position;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 
 public class globalScope extends Scope {
@@ -37,19 +40,20 @@ public class globalScope extends Scope {
     }
     private void addBuiltinFunc() {
 
-        funcDefParameterNode para_print = new funcDefParameterNode(null);
-        para_print.parameters.add(new parameterNode(null,new Type(Type.basicType.String,0,false)),);
+        /*funcDefParameterNode para_print = new funcDefParameterNode(null);
+        //para_print.parameters.add(new parameterNode(null,new Type(Type.basicType.String,0,false)),);
         functypenameNode fcty_print = new functypenameNode (null,true);
         funcDefNode tmp = new funcDefNode(null, fcty_print,
                 "print",para_print,null);
 
-        funcMember.put("print", tmp);
+        funcMember.put("print", tmp);*/
 
 //        ArrayList<paraDef> para3 = new ArrayList<>();
 //        para3.add(new paraDef(new DataType("string"), "str"));
 //        funcDefNode print = new funcDefNode(null, "print", new DataType("void"), para3);
 //        funcMember.put(print.funcName, print);
-        /*
+
+/*
 函数：void print(string str);
 函数：void println(string str);
 函数：void printInt(int n);
@@ -58,6 +62,7 @@ public class globalScope extends Scope {
 函数：int getInt();
 函数：string toString(int i);
          */
+
     }
 
     private HashMap<String, Type> types = new HashMap<>();

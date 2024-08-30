@@ -1,11 +1,11 @@
 package FrontEnd;
 
 import AST.*;
-import Util.*;
+import AST.Definition.*;
+import AST.Statement.*;
+import AST.Expression.*;
 import Util.error.*;
 import Util.Scope.*;
-
-import java.util.HashMap;
 
 public class SymbolCollector implements ASTVisitor {
     private globalScope gScope;
@@ -68,23 +68,13 @@ public class SymbolCollector implements ASTVisitor {
     @Override
     public void visit(varDeclareNode varDeclareNode){}
     @Override
-    public void visit(buildin_typenameNode buildinTypenameNode){}
-    @Override
-    public void visit(varTypeNode varTypeNode){}
-    @Override
     public void visit(varDefNode varDefNode){}
-    @Override
-    public void visit(functypenameNode functypenameNode){}
     @Override
     public void visit(parameterNode parameterNode){}
     @Override
     public void visit(funcDefParameterNode fucDefParemeterNode){}
     @Override
     public void visit(parenExprNode parenExprNode){}
-    @Override
-    public void visit(expressionListNode expressionListNode){}
-    @Override
-    public void visit(newSizeNode newSizeNode){}
     @Override
     public void visit(newVarExprNode newVarExprNode){}
     @Override
@@ -109,4 +99,6 @@ public class SymbolCollector implements ASTVisitor {
     public void visit(FmtstringNode fmtstringNode){}
     @Override
     public void visit(varDefStmtNode varDefStmtNode){}
+    @Override
+    public void visit(newArrayExprNode newArrayExprNode){}
 }

@@ -3,7 +3,6 @@ package Util.Scope;
 import Util.error.semanticError;
 import Util.position;
 import Util.Type;
-import AST.functypenameNode;
 
 import java.util.HashMap;
 
@@ -13,7 +12,7 @@ public class Scope {
     public boolean isLoop;//Only check whether THIS scope is Loop.
     public String className = null;
 
-    public functypenameNode fucRetType;
+    public Type fucRetType;
     private Scope parentScope;
 
 

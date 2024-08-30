@@ -1,3 +1,4 @@
+/*
 package AST;
 
 import Util.position;
@@ -16,3 +17,4 @@ public class newSizeNode extends ASTNode {
     }
 
 }
+*/
