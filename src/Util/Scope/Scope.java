@@ -1,17 +1,18 @@
-package Util;
+package Util.Scope;
 
 import Util.error.semanticError;
 import Util.position;
 import Util.Type;
 import AST.functypenameNode;
 
-import java.util.HashSet;
 import java.util.HashMap;
 
 public class Scope {
 
     public HashMap<String, Type> members;
-    public boolean isLoop, isFunction, isClass;
+    public boolean isLoop;//Only check whether THIS scope is Loop.
+    public String className = null;
+
     public functypenameNode fucRetType;
     private Scope parentScope;
 
@@ -19,8 +20,6 @@ public class Scope {
     public Scope(Scope parentScope) {
         members = new HashMap<>();
         isLoop =  parentScope==null? false : parentScope.isLoop;
-        isFunction = parentScope==null? false : parentScope.isFunction;
-        isClass = parentScope==null? false : parentScope.isClass;
         fucRetType = parentScope==null? null : parentScope.fucRetType;
         this.parentScope = parentScope;
     }
@@ -47,5 +46,17 @@ public class Scope {
         else if (parentScope != null && lookUpon)
             return parentScope.getType(name, true);
         return null;
+    }
+
+    public boolean isInLoop() {
+        if(isLoop) return true;
+        else if(parentScope != null) return parentScope.isInLoop();
+        else return false;
+    }
+
+    public String isInClass() {
+        if(className != null) return className;
+        else if(parentScope != null) return parentScope.isInClass();
+        else return null;
     }
 }

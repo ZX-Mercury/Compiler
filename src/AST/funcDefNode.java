@@ -8,7 +8,8 @@ public class funcDefNode extends bodyNode {
     public funcDefParameterNode parameterList;
     public suiteNode suite;
 
-    public funcDefNode(position pos, functypenameNode type, String name, funcDefParameterNode parameterList, suiteNode suite) {
+    public funcDefNode(position pos, functypenameNode type, String name,
+                       funcDefParameterNode parameterList, suiteNode suite) {
         super(pos);
         this.type = type;
         this.name = name;

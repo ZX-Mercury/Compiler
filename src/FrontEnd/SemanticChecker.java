@@ -1,11 +1,11 @@
+/*
 package FrontEnd;
 
 import AST.*;
-import Util.*;
+import Util.Scope.Scope;
+import Util.Scope.globalScope;
 import Util.error.semanticError;
 import Util.Type;
-import Util.typeCmp;
-import jdk.jshell.execution.Util;
 
 public class SemanticChecker implements ASTVisitor{
     globalScope gScope;
@@ -162,9 +162,11 @@ public class SemanticChecker implements ASTVisitor{
     @Override public void visit(assignExprNode it){
         it.lhs.accept(this);
         it.rhs.accept(this);
-        /*if(it.lhs.type!=it.rhs.type){
+        */
+/*if(it.lhs.type!=it.rhs.type){
             throw new semanticError("Semantic Error: type not match", it.pos);
-        }*/
+        }*//*
+
         //TODO: new 数组的语法糖
         it.checkType();
     }
@@ -176,7 +178,8 @@ public class SemanticChecker implements ASTVisitor{
     @Override public void visit(memberExprNode it){
         it.expr.accept(this);
         it.checkType();
-        /*if (node.class_ instanceof ArrayLiteralNode) {
+        */
+/*if (node.class_ instanceof ArrayLiteralNode) {
             if (!node.member_.equals("size")) {
                 System.out.println("Undefined Identifier");
                 throw new SemanticError("Undefined Symbol Error", node.pos_);
@@ -208,7 +211,8 @@ public class SemanticChecker implements ASTVisitor{
             }
             System.out.println("Undefined Identifier");
             throw new SemanticError("Undefined Symbol Error", node.pos_);
-        }*/
+        }*//*
+
     }
     @Override public void visit(callExprNode it){
         it.functionIdentifier.accept(this);
@@ -269,3 +273,4 @@ public class SemanticChecker implements ASTVisitor{
         }
     }
 }
+*/
