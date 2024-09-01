@@ -11,7 +11,7 @@ public class Type {
     public int dim ;
     public boolean isLeftValue ;
     public Type functionReturnType ;
-    public ArrayList<Type> functionParameters ;
+    public ArrayList<Type> functionParameters =new ArrayList<>() ;
 
     public Type (basicType _type, int _dim, boolean _isLeftValue) {
         btype = _type ;

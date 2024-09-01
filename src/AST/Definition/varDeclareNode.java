@@ -10,7 +10,7 @@ public class varDeclareNode extends ASTNode {
     public String name ;
     public ExpressionNode expression ;
     public Boolean isInitialized ;
-    Type type ;
+    public Type type ;
 
     public varDeclareNode (position pos, String name) {
         super (pos) ;

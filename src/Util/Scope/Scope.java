@@ -9,11 +9,11 @@ import java.util.HashMap;
 public class Scope {
 
     public HashMap<String, Type> members;
-    public boolean isLoop;//Only check whether THIS scope is Loop.
+    public boolean isLoop, isFunction, isClass;//Only check whether THIS scope is Loop.
     public String className = null;
 
     public Type fucRetType;
-    private Scope parentScope;
+    public Scope parentScope;
 
 
     public Scope(Scope parentScope) {

@@ -47,8 +47,8 @@ expression
     | expression '(' (expression (',' expression)*)? ')'        #callExpr
     | expression '[' expression ']'                             #arrayExpr
 
-    | <assoc=right> (PlusPlus | MinusMinus) expression          #preIncExpr//done
     | expression (PlusPlus | MinusMinus)                        #postIncExpr//done
+    | <assoc=right> (PlusPlus | MinusMinus) expression          #preIncExpr//done
     | <assoc=right> (Plus | Minus | Not | Tilde) expression     #unaryExpr//done
     | <assoc=right> New tp=(Int | Bool | String | Identifier) '(' ')'   #newVarExpr
     | <assoc=right> New tp=(Int | Bool | String | Identifier)

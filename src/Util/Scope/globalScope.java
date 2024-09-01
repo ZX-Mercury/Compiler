@@ -11,6 +11,7 @@ import Util.Type;
 import Util.error.semanticError;
 import Util.position;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class globalScope extends Scope {
@@ -39,20 +40,58 @@ public class globalScope extends Scope {
         addBuiltinFunc();
     }
     private void addBuiltinFunc() {
-
-        /*funcDefParameterNode para_print = new funcDefParameterNode(null);
-        //para_print.parameters.add(new parameterNode(null,new Type(Type.basicType.String,0,false)),);
-        functypenameNode fcty_print = new functypenameNode (null,true);
+        funcDefParameterNode para = new funcDefParameterNode(null);
+//        void print(string str);
+        funcDefParameterNode para_print = new funcDefParameterNode(null);
+        para_print.parameters.add(new parameterNode(null,new Type(Type.basicType.String,0,false),"__str"));
+        Type fcty_print = new Type (Type.basicType.Void,0,false);
         funcDefNode tmp = new funcDefNode(null, fcty_print,
                 "print",para_print,null);
+        funcMember.put("print", tmp);
 
-        funcMember.put("print", tmp);*/
+//        void println(string str);
+        funcDefParameterNode para_println = new funcDefParameterNode(null);
+        para_println.parameters.add(new parameterNode(null,new Type(Type.basicType.String,0,false),"__str"));
+        Type fcty_println = new Type (Type.basicType.Void,0,false);
+        funcDefNode tmp2 = new funcDefNode(null, fcty_println,
+                "println",para_println,null);
+        funcMember.put("println", tmp2);
 
-//        ArrayList<paraDef> para3 = new ArrayList<>();
-//        para3.add(new paraDef(new DataType("string"), "str"));
-//        funcDefNode print = new funcDefNode(null, "print", new DataType("void"), para3);
-//        funcMember.put(print.funcName, print);
+//        void printInt(int n);
+        funcDefParameterNode para_printInt = new funcDefParameterNode(null);
+        para_printInt.parameters.add(new parameterNode(null,new Type(Type.basicType.Int,0,false),"__n"));
+        Type fcty_printInt = new Type (Type.basicType.Void,0,false);
+        funcDefNode tmp3 = new funcDefNode(null, fcty_printInt,
+                "printInt",para_printInt,null);
+        funcMember.put("printInt", tmp3);
 
+//        void printlnInt(int n);
+        funcDefParameterNode para_printlnInt = new funcDefParameterNode(null);
+        para_printlnInt.parameters.add(new parameterNode(null,new Type(Type.basicType.Int,0,false),"__n"));
+        Type fcty_printlnInt = new Type (Type.basicType.Void,0,false);
+        funcDefNode tmp4 = new funcDefNode(null, fcty_printlnInt,
+                "printlnInt",para_printlnInt,null);
+        funcMember.put("printlnInt", tmp4);
+
+//        string getString();
+        Type fcty_getString = new Type (Type.basicType.String,0,false);
+        funcDefNode tmp5 = new funcDefNode(null, fcty_getString,
+                "getString",para,null);
+        funcMember.put("getString", tmp5);
+
+//        int getInt();
+        Type fcty_getInt = new Type (Type.basicType.Int,0,false);
+        funcDefNode tmp6 = new funcDefNode(null, fcty_getInt,
+                "getInt",para,null);
+        funcMember.put("getInt", tmp6);
+
+//        string toString(int i);
+        funcDefParameterNode para_toString = new funcDefParameterNode(null);
+        para_toString.parameters.add(new parameterNode(null,new Type(Type.basicType.Int,0,false),"__i"));
+        Type fcty_toString = new Type (Type.basicType.String,0,false);
+        funcDefNode tmp7 = new funcDefNode(null, fcty_toString,
+                "toString",para_toString,null);
+        funcMember.put("toString", tmp7);
 /*
 函数：void print(string str);
 函数：void println(string str);

@@ -2,8 +2,10 @@ package AST.Expression;
 
 import AST.ASTVisitor;
 import AST.Expression.ExpressionNode;
+import Util.error.semanticError;
 import Util.Type;
 import Util.position;
+import Util.typeCmp;
 
 import java.util.ArrayList;
 
@@ -19,7 +21,19 @@ public class callExprNode extends ExpressionNode {
 
     @Override
     public void checkType() {
-        type = functionIdentifier.type ;
+        type = new Type(functionIdentifier.type) ;
+        type.isLeftValue = false;
+        /*if (type.btype!=Type.basicType.Function) {
+            throw new semanticError("Undefined Identifier", pos);
+        }
+        if(type.functionParameters.size()!=paraList.size()) {
+            throw new semanticError("Wrong Number of Parameters", pos);
+        }
+
+        for (int i = 0; i < paraList.size(); i++) {
+            if (!typeCmp.cmptype(type.functionParameters.get(i), paraList.get(i).type))
+                throw new semanticError("Not a parameter type", pos);
+        }*/
     }
 
     @Override

@@ -22,6 +22,6 @@ public class classDefNode extends bodyNode {
 
     @Override
     public void accept(ASTVisitor visitor) {
-        //visitor.visit(this);
+        visitor.visit(this);
     }
 }

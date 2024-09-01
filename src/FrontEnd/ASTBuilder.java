@@ -46,6 +46,10 @@ public class ASTBuilder extends MxBaseVisitor<ASTNode> {
         newArrayExprNode newArray = new newArrayExprNode(new position(ctx)) ;
         ctx.expression().forEach(v -> newArray.exprList.add((ExpressionNode) visit(v))) ;
         newArray.arrayLiteral = ctx.arrayLiteral() == null ? null : (arrayLiteralNode) visit(ctx.arrayLiteral()) ;
+        if(ctx.Identifier()!=null) newArray.type = new Type(ctx.Identifier().toString(), ctx.LeftBracket().size(), false) ;
+        else if(ctx.Int()!=null) newArray.type = new Type(Type.basicType.Int, ctx.LeftBracket().size(), false) ;
+        else if(ctx.Bool()!=null) newArray.type = new Type(Type.basicType.Bool, ctx.LeftBracket().size(), false) ;
+        else if(ctx.String()!=null) newArray.type = new Type(Type.basicType.String, ctx.LeftBracket().size(), false) ;
         return newArray;
     }
 
@@ -58,6 +62,9 @@ public class ASTBuilder extends MxBaseVisitor<ASTNode> {
         else type = new Type(ctx.varType().Identifier().toString(), ctx.varType().LeftBracket().size(), false) ;
         varDefNode varDef = new varDefNode(new position(ctx), type) ;
         ctx.varDeclare().forEach(v -> varDef.varDeclarations.add((varDeclareNode) visit(v)));
+        for (var v : varDef.varDeclarations) {
+            v.type = type;
+        }
         return varDef;
     }
 
@@ -153,7 +160,7 @@ public class ASTBuilder extends MxBaseVisitor<ASTNode> {
     @Override
     public ASTNode visitForExpStmt (MxParser.ForExpStmtContext ctx) {
         ExpressionNode init = ctx.init==null? null : (ExpressionNode) visit(ctx.init),
-                       condition = (ExpressionNode) visit(ctx.cond),
+                       condition = ctx.cond==null? null : (ExpressionNode) visit(ctx.cond),
                        step = ctx.step==null? null : (ExpressionNode) visit(ctx.step) ;
         StmtNode statement = (StmtNode) visit(ctx.statement()) ;
         return new forExpStmtNode(new position(ctx), init, condition, step, statement) ;
@@ -200,7 +207,8 @@ public class ASTBuilder extends MxBaseVisitor<ASTNode> {
     public ASTNode visitArrayExpr (MxParser.ArrayExprContext ctx) {
         ExpressionNode arrayIdentifier = (ExpressionNode) visit(ctx.expression(0)),
                        arrayIndex = (ExpressionNode) visit(ctx.expression(1)) ;
-        return new arrayExprNode(new position(ctx), arrayIdentifier, arrayIndex) ;
+        var tmp = new arrayExprNode(new position(ctx), arrayIdentifier, arrayIndex);
+        return tmp ;
     }
 
     @Override

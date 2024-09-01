@@ -24,6 +24,9 @@ public class preIncExprNode extends ExpressionNode {
         if (expression.type.btype != Type.basicType.Int) {
             throw new semanticError ("Semantic Error: integer expected", pos) ;
         }
+        if(!expression.type.isLeftValue){
+            throw new semanticError("not assignable", pos);
+        }
         type = new Type (Type.basicType.Int, 0, false) ;
     }
     @Override

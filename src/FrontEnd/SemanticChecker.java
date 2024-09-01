@@ -1,11 +1,15 @@
-/*
 package FrontEnd;
 
 import AST.*;
-import Util.Scope.Scope;
-import Util.Scope.globalScope;
+import AST.Expression.*;
+import AST.Statement.*;
+import AST.Definition.*;
+import Util.Scope.*;
 import Util.error.semanticError;
 import Util.Type;
+
+import java.util.ArrayList;
+import java.util.Objects;
 
 public class SemanticChecker implements ASTVisitor{
     globalScope gScope;
@@ -18,30 +22,41 @@ public class SemanticChecker implements ASTVisitor{
 
     @Override
     public void visit(RootNode it) {
-
+        if(!gScope.funcMember.containsKey("main"))
+            throw new semanticError("No main function", it.pos);
+        else {
+            if(gScope.funcMember.get("main").type.btype!=Type.basicType.Int)
+                throw new semanticError("main function should return int", it.pos);
+            if(gScope.funcMember.get("main").parameterList!=null)
+                throw new semanticError("main function should not have parameters", it.pos);
+        }
         for(ASTNode body : it.parts) {
             body.accept(this);
         }
     }
 
     @Override public void visit(returnStmtNode it){
-        if(!currentScope.isFunction){
-            throw new semanticError("Semantic Error: return statement not in function", it.pos);
+        Scope tmp = currentScope;
+        while(!(tmp instanceof FuncScope)&&tmp!=null) tmp = tmp.parentScope;
+        if(tmp==null){
+            throw new semanticError("return statement not in function", it.pos);
+        }
+        else {
+            ((FuncScope) tmp).returned = true;
         }
         if(it.retExpr!=null){
             it.retExpr.accept(this);
-            if(!(it.retExpr.type.btype==currentScope.fucRetType.retType.buildin_typename.bType
-                && it.retExpr.type.dim == currentScope.fucRetType.retType.dim)){//?
-                throw new semanticError("Semantic Error: return type not match", it.pos);
+            if(!(it.retExpr.type.btype==currentScope.fucRetType.btype)||it.retExpr.type.dim!=currentScope.fucRetType.dim){
+                throw new semanticError("return type not match", it.pos);
             }
         }
         else{
-            if(!currentScope.fucRetType.isVoid){
-                throw new semanticError("Semantic Error: return type not match", it.pos);
+            if(currentScope.fucRetType.btype!=Type.basicType.Void){
+                throw new semanticError("return type not match", it.pos);
             }
         }
-
     }
+
     @Override public void visit(ifStmtNode it){
         it.expression.accept(this);
         if (!it.expression.type.btype.equals(Type.basicType.Bool))
@@ -69,22 +84,25 @@ public class SemanticChecker implements ASTVisitor{
     @Override public void visit(forDefStmtNode it){
         currentScope = new Scope(currentScope);
         it.varDef.accept(this);
-        it.condition.accept(this);
-        if (!it.condition.type.btype.equals(Type.basicType.Bool))
-            throw new semanticError("Semantic Error: type not match. It should be bool",
-                    it.condition.pos);
-        it.step.accept(this);
+        if(it.condition!=null) {
+            it.condition.accept(this);
+            if (!it.condition.type.btype.equals(Type.basicType.Bool))
+                throw new semanticError("Semantic Error: type not match. It should be bool",
+                        it.condition.pos);
+        }
+        if(it.step!=null) it.step.accept(this);
         it.statement.accept(this);
         currentScope = currentScope.parentScope();
     }
     @Override public void visit(forExpStmtNode it){
-        it.init.accept(this);
-        it.condition.accept(this);
-        if (!it.condition.type.btype.equals(Type.basicType.Bool))
-            throw new semanticError("Semantic Error: type not match. It should be bool",
-                    it.condition.pos);
-        it.step.accept(this);
-
+        if(it.init!=null) it.init.accept(this);
+        if(it.condition!=null) {
+            it.condition.accept(this);
+            if (!it.condition.type.btype.equals(Type.basicType.Bool))
+                throw new semanticError("Semantic Error: type not match. It should be bool",
+                        it.condition.pos);
+            if (it.step != null) it.step.accept(this);
+        }
         currentScope = new Scope(currentScope);
         it.statement.accept(this);
         currentScope = currentScope.parentScope();
@@ -110,27 +128,49 @@ public class SemanticChecker implements ASTVisitor{
         it.expr.accept(this);
     }
     @Override public void visit(classConstructNode it){}
-    @Override public void visit(varDeclareNode it){}
-    @Override public void visit(buildin_typenameNode it){}
-    @Override public void visit(varTypeNode it){}
-    @Override public void visit(functypenameNode it){}
+    @Override public void visit(varDeclareNode it){
+        if(it.expression!=null){
+            it.expression.accept(this);
+            if (it.expression.type.btype == Type.basicType.Null) {
+            }
+            else if (it.expression.type.btype == Type.basicType.Function
+                    &&it.type.btype==it.expression.type.functionReturnType.btype){}
+            else if(it.expression.type.btype!=it.type.btype){
+                throw new semanticError("type not match", it.pos);
+            }
+        }
+
+    }
     @Override public void visit(parameterNode it){}
     @Override public void visit(funcDefParameterNode it){}
     @Override public void visit(funcDefNode it){
-        currentScope = new Scope(currentScope);
+        if(it.type.btype== Type.basicType.Class){
+            if(!gScope.classMember.containsKey(it.type.Identifier)){
+                throw new semanticError("Invalid retType", it.pos);
+            }
+        }
+        currentScope = new FuncScope(currentScope, it.type);
         currentScope.isFunction = true;
         currentScope.fucRetType = it.type;
-
-        if(it.parameterList!=null)it.parameterList.accept(this);
+        if(it.parameterList!=null) {
+            it.parameterList.accept(this);
+            for(var paras : it.parameterList.parameters){
+                currentScope.defineVariable(paras.name, paras.type, it.pos);
+            }
+        }
         it.suite.accept(this);
-
+        if(!(currentScope.fucRetType.btype==Type.basicType.Void)
+                &&!((FuncScope)currentScope).returned
+                &&!(Objects.equals(it.name, "main"))){
+            throw new semanticError("function not return", it.pos);
+        }
         currentScope = currentScope.parentScope();
     }
     @Override public void visit(classDefNode it){
         currentScope = new Scope(currentScope);
         currentScope.isClass = true;
 
-        it.constructor.accept(this);
+        if(it.constructor!=null)it.constructor.accept(this);
         for(varDefStmtNode var : it.varList){
             var.accept(this);
         }
@@ -140,33 +180,56 @@ public class SemanticChecker implements ASTVisitor{
 
         currentScope = currentScope.parentScope();
     }
-    @Override public void visit(expressionListNode it){}
-    @Override public void visit(newSizeNode it){}//maybe not needed
     @Override public void visit(atomExprNode it){
-        if (!currentScope.containsVariable(it.identifier, true))
-            throw new semanticError("Semantic Error: variable not defined. ", it.pos);
-        it.type = currentScope.getType(it.identifier, true);
+        if (it.pritype == atomExprNode.primaryType.Int) {
+            it.type = new Type(Type.basicType.Int, 0, false);
+        } else if (it.pritype == atomExprNode.primaryType.Bool) {
+            it.type = new Type(Type.basicType.Bool, 0, false);
+            //it.isLeftValue = false;
+        } else if (it.pritype == atomExprNode.primaryType.String) {
+            it.type = new Type(Type.basicType.String, 0, false);
+        } else if (it.pritype == atomExprNode.primaryType.Null) {
+            it.type = new Type(Type.basicType.Null, 0, false);
+        } else if (it.pritype == atomExprNode.primaryType.Fmtstring) {
+            it.type = new Type(Type.basicType.String, 0, false);
+        } else if (it.pritype == atomExprNode.primaryType.This) {
+            String className = currentScope.isInClass();
+            if (className == null) throw new semanticError("Invalid Type", it.pos);
+            it.type = new Type(className, 0, true);
+            it.type.Identifier = className;
+        } else if (it.identifier != null) {
+            Type target1 = currentScope.getType(it.identifier, true);
+            funcDefNode target2 = gScope.getFunc(it.identifier);
+            if (target1 == null && target2 == null)  throw new semanticError("Undefined Identifier" , it.pos);
+            if (target1 != null) it.type = target1;
+            if (target2 != null) {
+                ArrayList<Type> paras = new ArrayList<>();
+                for (var para : target2.parameterList.parameters) {
+                    paras.add(para.type);
+                }
+                it.type = new Type(target2.type, paras);
+                //it.type.isLeftValue = false;
+            }
+
+            if (it.type.btype== Type.basicType.Function) it.type.isLeftValue = false;
+            else it.type.isLeftValue = true;
+        }
     }
     @Override public void visit(parenExprNode it){
         it.expr.accept(this);
         it.checkType();
     }
     @Override public void visit(newVarExprNode it){
-        it.builtinType.accept(this);
-        for(ExpressionNode expr : it.newSize){
-            expr.accept(this);
+        if(it.type.Identifier!=null) {
+            if (!gScope.classMember.containsKey(it.type.Identifier))
+                throw new semanticError("invalid variable definition type", it.pos);
+            it.type = new Type(it.type.Identifier, it.type.dim, false);
         }
-        it.arrayLiteral.accept(this);
-        it.checkType();
+        else it.type = new Type(it.type.btype, it.type.dim, false);
     }
     @Override public void visit(assignExprNode it){
         it.lhs.accept(this);
         it.rhs.accept(this);
-        */
-/*if(it.lhs.type!=it.rhs.type){
-            throw new semanticError("Semantic Error: type not match", it.pos);
-        }*//*
-
         //TODO: new 数组的语法糖
         it.checkType();
     }
@@ -178,48 +241,34 @@ public class SemanticChecker implements ASTVisitor{
     @Override public void visit(memberExprNode it){
         it.expr.accept(this);
         it.checkType();
-        */
-/*if (node.class_ instanceof ArrayLiteralNode) {
-            if (!node.member_.equals("size")) {
-                System.out.println("Undefined Identifier");
-                throw new SemanticError("Undefined Symbol Error", node.pos_);
-            }
-            node.funcType_ = new FuncType(new Type("int"));
-            node.isLeftValue_ = false;
-            return;
-        }
-        if (node.class_.type_.isArray_) {
-            if (!node.member_.equals("size")) {
-                System.out.println("Undefined Identifier");
-                throw new SemanticError("Undefined Symbol Error", node.pos_);
-            }
-            node.funcType_ = new FuncType(new Type("int"));
-            node.isLeftValue_ = false;
-        }
-        else {
-            ClassType classType = gScope_.getClassType(node.class_.type_.name_);
-            FuncType funcType = classType.funcMap_.get(node.member_);
-            Type varType = classType.varMap_.get(node.member_);
-            if (funcType != null) {
-                node.funcType_ = funcType;
-                node.isLeftValue_ = false;
-                return;
-            }
-            if (varType != null) {
-                node.type_ = varType;
-                return;
-            }
-            System.out.println("Undefined Identifier");
-            throw new SemanticError("Undefined Symbol Error", node.pos_);
-        }*//*
-
     }
     @Override public void visit(callExprNode it){
         it.functionIdentifier.accept(this);
-        it.expressionList.accept(this);
+        for(ExpressionNode expr : it.paraList){
+            expr.accept(this);
+        }
         it.checkType();
     }
-    @Override public void visit(arrayExprNode it){}
+    @Override public void visit(arrayExprNode it){
+        it.arrayIdentifier.accept(this);
+        it.arrayIndex.accept(this);
+        it.checkType();
+        if (it.type.btype == Type.basicType.Class) {
+            if (!gScope.classMember.containsKey(it.type.Identifier))
+                throw new semanticError("invalid type for array", it.pos);
+        }
+        /*for (var index: it.indexList) {
+            index.accept(this);
+            if (!index.type.typeName.equals("int") || index.type.isArray)
+                throw new Error("SemanticError", "invalid type for array initialization", it.pos);
+        }
+        if (it.iniList != null) {
+            if (it.iniList.type == null) it.iniList.type = new DataType();
+            it.iniList.accept(this);
+            if (!it.iniList.type.equals(it.type)) throw new Error("SemanticError", "initArray has different dataType", it.pos);
+        }
+        it.isLeftValue = false;*/
+    }
     @Override public void visit(preIncExprNode it){
         it.expression.accept(this);
         it.checkType();
@@ -263,14 +312,39 @@ public class SemanticChecker implements ASTVisitor{
     }
 
     @Override public void visit(varDefNode it){
-        it.typeNode.accept(this);
+        //it.accept(this);
         Type tmp;
-        if(it.typeNode.classIdentifier!=null) tmp = new Type(it.typeNode.classIdentifier, it.typeNode.dim, true);
-        else tmp = new Type(it.typeNode.buildin_typename.bType, it.typeNode.dim, true);
+        if(it.type.Identifier!=null) {
+            if (!gScope.classMember.containsKey(it.type.Identifier))
+                throw new semanticError("invalid variable definition type", it.pos);
+            tmp = new Type(it.type.Identifier, it.type.dim, true);
+        }
+        else tmp = new Type(it.type.btype, it.type.dim, true);
         for(varDeclareNode var : it.varDeclarations){
             var.accept(this);
             currentScope.defineVariable(var.name, tmp, var.pos);
         }
+        /*if (it.type.isClass && !globalScope.classMember.containsKey(it.type.typeName))
+            throw new Error("SemanticError", "invalid variable definition type", it.pos);
+        if (globalScope.funcMember.containsKey(it.varName))
+            throw new Error("SemanticError", "variable " + it.varName + " has the same name with function", it.pos);
+        if (currentScope.members.containsKey(it.varName)) throw new Error("SemanticError", it.varName + " redefined", it.pos);
+        if (it.assignNode != null) {
+            if (it.assignNode.type == null)  it.assignNode.type = new DataType();
+            it.assignNode.accept(this);
+            if (!it.assignNode.type.equals(it.type) && !it.assignNode.type.isNull) throw new Error("SemanticError", "initialized variable's type is mismatched", it.pos);
+            if (it.assignNode.type.isNull && it.type.checkBaseType()) throw new Error("SemanticError", "null cannot be assigned to primitive type", it.pos);
+        }
+        currentScope.addVar(it.varName, it.pos, it.type);*/
+    }
+
+    @Override
+    public void visit(newArrayExprNode it){
+
+        if(it.arrayLiteral!=null)it.arrayLiteral.accept(this);
+        for(ExpressionNode expr : it.exprList){
+            expr.accept(this);
+        }
+        it.checkType();
     }
 }
-*/
