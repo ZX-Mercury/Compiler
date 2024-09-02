@@ -91,6 +91,7 @@ public class SemanticChecker implements ASTVisitor{
                         it.condition.pos);
         }
         if(it.step!=null) it.step.accept(this);
+        currentScope.isLoop = true;
         it.statement.accept(this);
         currentScope = currentScope.parentScope();
     }
@@ -104,6 +105,7 @@ public class SemanticChecker implements ASTVisitor{
             if (it.step != null) it.step.accept(this);
         }
         currentScope = new Scope(currentScope);
+        currentScope.isLoop = true;
         it.statement.accept(this);
         currentScope = currentScope.parentScope();
     }
@@ -115,19 +117,30 @@ public class SemanticChecker implements ASTVisitor{
         }
     }
     @Override public void visit(breakStmt it){
-        if (!currentScope.isLoop) {
-            throw new semanticError("Semantic Error: break statement not in loop", it.pos);
+        var tmp = currentScope;
+        while (tmp != null && tmp.isLoop) tmp = tmp.parentScope;
+        if (tmp==null) {
+            throw new semanticError("break statement not in loop", it.pos);
         }
     }
     @Override public void visit(continueStmtNode it){
-        if (!currentScope.isLoop) {
-            throw new semanticError("Semantic Error: continue statement not in loop", it.pos);
+        var tmp = currentScope;
+        while (tmp != null && tmp.isLoop) tmp = tmp.parentScope;
+        if (tmp==null) {
+            throw new semanticError("continue statement not in loop", it.pos);
         }
     }
     @Override public void visit(pureExprStmtNode it){
         it.expr.accept(this);
     }
-    @Override public void visit(classConstructNode it){}
+    @Override public void visit(classConstructNode it){
+        Type tmp = new Type(Type.basicType.Void, 0, false);
+        currentScope = new FuncScope(currentScope, tmp);
+        currentScope.isFunction = true;
+        currentScope.fucRetType = tmp;
+        it.suite.accept(this);
+        currentScope = currentScope.parentScope;
+    }
     @Override public void visit(varDeclareNode it){
         if(it.type.btype== Type.basicType.Class){
             if(!gScope.classMember.containsKey(it.type.Identifier)){
@@ -181,7 +194,12 @@ public class SemanticChecker implements ASTVisitor{
         currentScope = new ClassScope(currentScope);
         currentScope.className = it.name;
 
-        if(it.constructor!=null)it.constructor.accept(this);
+        if(it.constructor!=null) {
+            it.constructor.accept(this);
+            if(!Objects.equals(it.constructor.className, it.name)){
+                throw new semanticError("constructor has different function name with the class", it.constructor.pos);
+            }
+        }
         if(currentScope instanceof ClassScope)((ClassScope) currentScope).funcMember = it.funcList;
         for(varDeclareNode var : it.varList.values()){
             var.accept(this);
@@ -232,8 +250,10 @@ public class SemanticChecker implements ASTVisitor{
             if (target1 != null) it.type = target1;
             if (target2 != null) {
                 ArrayList<Type> paras = new ArrayList<>();
-                for (var para : target2.parameterList.parameters) {
-                    paras.add(para.type);
+                if(target2.parameterList!=null) {
+                    for (var para : target2.parameterList.parameters) {
+                        paras.add(para.type);
+                    }
                 }
                 it.type = new Type(target2.retType);
                 //it.type.isLeftValue = false;
