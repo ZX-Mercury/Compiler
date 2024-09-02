@@ -45,7 +45,7 @@ expression
     : primary                                                   #atomExpr
     | '(' expression ')'                                        #parenExpr
     | expression '(' (expression (',' expression)*)? ')'        #callExpr
-    | expression '[' expression ']'                             #arrayExpr
+    | expression ('[' expression ']' )+                            #arrayExpr
 
     | expression (PlusPlus | MinusMinus)                        #postIncExpr//done
     | <assoc=right> (PlusPlus | MinusMinus) expression          #preIncExpr//done

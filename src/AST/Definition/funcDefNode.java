@@ -7,7 +7,7 @@ import Util.Type;
 import Util.position;
 
 public class funcDefNode extends bodyNode {
-    public Type type;
+    public Type retType;
     public String name;
     public funcDefParameterNode parameterList;
     public suiteNode suite;
@@ -15,7 +15,7 @@ public class funcDefNode extends bodyNode {
     public funcDefNode(position pos, Type type, String name,
                        funcDefParameterNode parameterList, suiteNode suite) {
         super(pos);
-        this.type = type;
+        this.retType = type;
         this.name = name;
         this.parameterList = parameterList;
         this.suite = suite;

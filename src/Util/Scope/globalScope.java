@@ -90,6 +90,13 @@ public class globalScope extends Scope {
         funcDefNode tmp7 = new funcDefNode(null, fcty_toString,
                 "toString",para_toString,null);
         funcMember.put("toString", tmp7);
+
+        /*//int size();
+        funcDefParameterNode para_size = new funcDefParameterNode(null);
+        Type fcty_size = new Type (Type.basicType.Int,0,false);
+        funcDefNode tmp8 = new funcDefNode(null, fcty_size,
+                "size",para_size,null);
+        funcMember.put("size", tmp8);*/
 /*
 函数：void print(string str);
 函数：void println(string str);

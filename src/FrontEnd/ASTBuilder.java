@@ -12,6 +12,7 @@ import Parser.MxBaseVisitor;
 import Parser.MxParser;
 import Util.Type;
 import Util.position;
+import Util.error.*;
 
 import java.util.ArrayList;
 
@@ -86,9 +87,10 @@ public class ASTBuilder extends MxBaseVisitor<ASTNode> {
     @Override
     public ASTNode visitFuncDef (MxParser.FuncDefContext ctx) {
         Type type;
-        if(ctx.functypename().Void()!=null) type = new Type(Type.basicType.Void, 0, false) ;
+        if(ctx.functypename().Void()!=null)
+            type = new Type(Type.basicType.Void, 0, false) ;
         else if (ctx.functypename().varType().Int()!=null)
-                type = new Type(Type.basicType.Int, ctx.functypename().varType().LeftBracket().size(), false) ;
+            type = new Type(Type.basicType.Int, ctx.functypename().varType().LeftBracket().size(), false) ;
         else if (ctx.functypename().varType().Bool()!=null)
             type = new Type(Type.basicType.Bool, ctx.functypename().varType().LeftBracket().size(), false) ;
         else if (ctx.functypename().varType().String()!=null)
@@ -123,12 +125,19 @@ public class ASTBuilder extends MxBaseVisitor<ASTNode> {
         //ctx.varDefStmt().forEach(v -> classDef.varList.add ((varDefStmtNode) visit (v)));
         for(var v : ctx.varDefStmt()) {
             var tmp = (varDefStmtNode) visit(v);
-            for(var tmp2 : tmp.varDef.varDeclarations)
-                classDef.varList.put(tmp2.name, tmp2);
+            for(var tmp2 : tmp.varDef.varDeclarations) {
+                if (classDef.varList.containsKey(tmp2.name)) {
+                    throw new semanticError("Duplicate variable name in class definition",tmp.pos);
+                }
+                    classDef.varList.put(tmp2.name, tmp2);
+            }
         }
         //ctx.funcDef().forEach(v -> classDef.funcList.add((funcDefNode) visit (v)));
         for(var v : ctx.funcDef()) {
             var tmp = (funcDefNode) visit(v);
+            if(classDef.funcList.containsKey(tmp.name)) {
+                throw new semanticError("Duplicate function name in class definition",tmp.pos);
+            }
             classDef.funcList.put(tmp.name, tmp);
         }
         return classDef ;
@@ -214,8 +223,11 @@ public class ASTBuilder extends MxBaseVisitor<ASTNode> {
 
     @Override
     public ASTNode visitArrayExpr (MxParser.ArrayExprContext ctx) {
-        ExpressionNode arrayIdentifier = (ExpressionNode) visit(ctx.expression(0)),
-                       arrayIndex = (ExpressionNode) visit(ctx.expression(1)) ;
+        ExpressionNode arrayIdentifier = (ExpressionNode) visit(ctx.expression(0));
+        ArrayList<ExpressionNode> arrayIndex = new ArrayList<>();
+        for(int i = 1; i < ctx.expression().size(); i++) {
+            arrayIndex.add((ExpressionNode) visit(ctx.expression(i))) ;
+        }
         var tmp = new arrayExprNode(new position(ctx), arrayIdentifier, arrayIndex);
         return tmp ;
     }

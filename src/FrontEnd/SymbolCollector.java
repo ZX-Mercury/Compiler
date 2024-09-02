@@ -31,7 +31,7 @@ public class SymbolCollector implements ASTVisitor {
         gScope.addFunc(it);
     }
 
-
+//-------------\\
 
     @Override
     public void visit(returnStmtNode it){}

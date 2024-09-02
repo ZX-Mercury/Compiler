@@ -25,7 +25,7 @@ public class SemanticChecker implements ASTVisitor{
         if(!gScope.funcMember.containsKey("main"))
             throw new semanticError("No main function", it.pos);
         else {
-            if(gScope.funcMember.get("main").type.btype!=Type.basicType.Int)
+            if(gScope.funcMember.get("main").retType.btype!=Type.basicType.Int)
                 throw new semanticError("main function should return int", it.pos);
             if(gScope.funcMember.get("main").parameterList!=null)
                 throw new semanticError("main function should not have parameters", it.pos);
@@ -155,14 +155,14 @@ public class SemanticChecker implements ASTVisitor{
     @Override public void visit(parameterNode it){}
     @Override public void visit(funcDefParameterNode it){}
     @Override public void visit(funcDefNode it){
-        if(it.type.btype== Type.basicType.Class){
-            if(!gScope.classMember.containsKey(it.type.Identifier)){
+        if(it.retType.btype== Type.basicType.Class){
+            if(!gScope.classMember.containsKey(it.retType.Identifier)){
                 throw new semanticError("Invalid retType", it.pos);
             }
         }
-        currentScope = new FuncScope(currentScope, it.type);
+        currentScope = new FuncScope(currentScope, it.retType);
         currentScope.isFunction = true;
-        currentScope.fucRetType = it.type;
+        currentScope.fucRetType = it.retType;
         if(it.parameterList!=null) {
             it.parameterList.accept(this);
             for(var paras : it.parameterList.parameters){
@@ -235,7 +235,7 @@ public class SemanticChecker implements ASTVisitor{
                 for (var para : target2.parameterList.parameters) {
                     paras.add(para.type);
                 }
-                it.type = new Type(target2.type);
+                it.type = new Type(target2.retType);
                 //it.type.isLeftValue = false;
             }
 
@@ -268,10 +268,26 @@ public class SemanticChecker implements ASTVisitor{
     }
     @Override public void visit(memberExprNode it){
         it.expr.accept(this);
-        it.checkType();
+        if (it.expr.type.btype == Type.basicType.Class || it.expr.type.btype == Type.basicType.This) {
+            if (!gScope.classMember.containsKey(it.expr.type.Identifier))
+                throw new semanticError("Undefined member", it.pos);
+            classDefNode classDef = gScope.getClass(it.expr.type.Identifier);
+            if (classDef.varList.containsKey(it.member)) {
+                it.type = classDef.varList.get(it.member).type;
+                it.type.isLeftValue = true;
+            } else if (classDef.funcList.containsKey(it.member)) {
+                funcDefNode function = classDef.funcList.get(it.member);
+                it.type = new Type(function.retType);
+                it.type.isLeftValue = false;
+            } else throw new semanticError("Undefined member" , it.pos);
+        }
+        else {
+            it.checkType();
+        }
     }
     @Override public void visit(callExprNode it){
         it.functionIdentifier.accept(this);
+       //it.functionIdentifier.type=currentScope.getType(it.functionIdentifier., true);
         for(ExpressionNode expr : it.paraList){
             expr.accept(this);
         }
@@ -279,11 +295,13 @@ public class SemanticChecker implements ASTVisitor{
     }
     @Override public void visit(arrayExprNode it){
         it.arrayIdentifier.accept(this);
-        it.arrayIndex.accept(this);
+        for(ExpressionNode expr : it.arrayIndex){
+            expr.accept(this);
+        }
         it.checkType();
         if (it.type.btype == Type.basicType.Class) {
-            if (!gScope.classMember.containsKey(it.type.Identifier))
-                throw new semanticError("invalid type for array", it.pos);
+            if (!currentScope.members.containsKey(it.arrayName)){}
+                //throw new semanticError("invalid type for array", it.pos);
         }
         /*for (var index: it.indexList) {
             index.accept(this);

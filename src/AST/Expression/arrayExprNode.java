@@ -5,13 +5,18 @@ import Util.position;
 import Util.Type;
 import Util.error.semanticError;
 
-public class arrayExprNode extends ExpressionNode {
-    public ExpressionNode arrayIdentifier, arrayIndex ;
+import java.util.ArrayList;
 
-    public arrayExprNode (position pos, ExpressionNode arrayIdentifier, ExpressionNode arrayIndex) {
+public class arrayExprNode extends ExpressionNode {
+    public ExpressionNode arrayIdentifier;
+    public ArrayList<ExpressionNode> arrayIndex ;
+    public String arrayName ;
+
+    public arrayExprNode (position pos, ExpressionNode arrayIdentifier, ArrayList<ExpressionNode> arrayIndex) {
         super (pos) ;
         this.arrayIdentifier = arrayIdentifier ;
         this.arrayIndex = arrayIndex ;
+        //this.arrayName = arrayName ;
     }
 
     @Override
@@ -19,10 +24,13 @@ public class arrayExprNode extends ExpressionNode {
         if (arrayIdentifier.type.dim == 0) {
             throw new semanticError ("Semantic Error: not an array", pos) ;
         }
-        if (!arrayIndex.type.btype.equals (Type.basicType.Int)|| arrayIndex.type.dim != 0) {
-            throw new semanticError ("Semantic Error: array index should be int", pos) ;
+        for(ExpressionNode index : arrayIndex) {
+            if (!index.type.btype.equals(Type.basicType.Int) || index.type.dim != 0) {
+                throw new semanticError("Semantic Error: array index should be int", pos);
+            }
         }
-        type = new Type (arrayIdentifier.type.btype, arrayIdentifier.type.dim - 1, true) ;
+        type = new Type (arrayIdentifier.type.btype, arrayIdentifier.type.dim - arrayIndex.size(), true) ;
+        type.Identifier = arrayIdentifier.type.Identifier ;
     }
 
     @Override
