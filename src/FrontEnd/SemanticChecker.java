@@ -112,7 +112,8 @@ public class SemanticChecker implements ASTVisitor{
     @Override public void visit(suiteNode it){
         if (!it.statementNodes.isEmpty()) {
             currentScope = new Scope(currentScope);
-            for (ASTNode stmt : it.statementNodes) stmt.accept(this);
+            for (ASTNode stmt : it.statementNodes)
+                stmt.accept(this);
             currentScope = currentScope.parentScope();
         }
     }

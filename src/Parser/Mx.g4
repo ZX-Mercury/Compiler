@@ -41,29 +41,48 @@ statement
     | ';'
     ;
 
-expression
-    : primary                                                   #atomExpr
-    | '(' expression ')'                                        #parenExpr
+expression//Distinguish the priority of each expression!
+    :  '(' expression ')'                                        #parenExpr
+
+    | expression ('[' expression ']' )+                         #arrayExpr
+    | expression Dot Identifier                                 #memberExpr
     | expression '(' (expression (',' expression)*)? ')'        #callExpr
-    | expression ('[' expression ']' )+                            #arrayExpr
 
     | expression (PlusPlus | MinusMinus)                        #postIncExpr//done
-    | <assoc=right> (PlusPlus | MinusMinus) expression          #preIncExpr//done
+
     | <assoc=right> (Plus | Minus | Not | Tilde) expression     #unaryExpr//done
+    | <assoc=right> (PlusPlus | MinusMinus) expression          #preIncExpr//done
+
     | <assoc=right> New tp=(Int | Bool | String | Identifier) '(' ')'   #newVarExpr
     | <assoc=right> New tp=(Int | Bool | String | Identifier)
             ('[' arraySize=expression? ']')* arrayLiteral?      #newArrayExpr
 
-    | expression op=(Plus | Minus | Mul | Div | Mod) expression #binaryExpr
-    | expression op=(Equal | NotEqual) expression               #binaryExpr
+    | expression op=(Mul | Div | Mod) expression                #binaryExpr
+
+    | expression op=(Plus | Minus) expression                   #binaryExpr
+
+    | expression op=(LeftShift | RightShift) expression        #binaryExpr//partly done
+
     | expression op=(Less | LessEqual
                     | Greater | GreaterEqual) expression        #binaryExpr
-    | expression op=(AndAnd | OrOr) expression                  #binaryExpr
-    | expression op=(And | Or | Caret
-                    | LeftShift | RightShift) expression        #binaryExpr//partly done
-    | <assoc=right> expression Assign expression                #assignExpr//done
-    | expression Dot Identifier                                 #memberExpr
+
+    | expression op=(Equal | NotEqual) expression               #binaryExpr
+
+    | expression And expression                                 #binaryExpr
+
+    | expression Caret expression                               #binaryExpr
+
+    | expression Or expression                                  #binaryExpr
+
+    | expression AndAnd expression                              #binaryExpr
+
+    | expression OrOr expression                                #binaryExpr
+
+
     | <assoc=right> expression Question expression Colon expression           #ternaryExpr//done
+
+    | <assoc=right> expression Assign expression                #assignExpr//done
+    | primary                                                   #atomExpr
     ;
 
 primary
