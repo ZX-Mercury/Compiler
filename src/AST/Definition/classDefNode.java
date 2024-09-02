@@ -2,22 +2,24 @@ package AST.Definition;
 
 import AST.ASTVisitor;
 import AST.bodyNode;
-import AST.Statement.varDefStmtNode;
+import AST.Definition.*;
+import Util.Type;
 import Util.position;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class classDefNode extends bodyNode {
     public String name;
     public classConstructNode constructor;
-    public ArrayList<funcDefNode> funcList;
-    public ArrayList<varDefStmtNode> varList;
+    public HashMap<String, funcDefNode> funcList;
+    public HashMap<String, varDeclareNode> varList;
 
     public classDefNode(position pos, String name) {
         super(pos);
         this.name = name;
-        this.funcList = new ArrayList<>();
-        this.varList = new ArrayList<>();
+        this.funcList = new HashMap<>();
+        this.varList = new HashMap<>();
     }
 
     @Override

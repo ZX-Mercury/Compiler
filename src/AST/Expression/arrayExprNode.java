@@ -19,7 +19,7 @@ public class arrayExprNode extends ExpressionNode {
         if (arrayIdentifier.type.dim == 0) {
             throw new semanticError ("Semantic Error: not an array", pos) ;
         }
-        if (!arrayIndex.type.btype.equals (Type.basicType.Int)) {
+        if (!arrayIndex.type.btype.equals (Type.basicType.Int)|| arrayIndex.type.dim != 0) {
             throw new semanticError ("Semantic Error: array index should be int", pos) ;
         }
         type = new Type (arrayIdentifier.type.btype, arrayIdentifier.type.dim - 1, true) ;

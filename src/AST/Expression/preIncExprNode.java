@@ -27,7 +27,7 @@ public class preIncExprNode extends ExpressionNode {
         if(!expression.type.isLeftValue){
             throw new semanticError("not assignable", pos);
         }
-        type = new Type (Type.basicType.Int, 0, false) ;
+        type = new Type (Type.basicType.Int, 0, true) ;
     }
     @Override
     public void accept (ASTVisitor visitor) {

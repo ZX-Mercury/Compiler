@@ -129,6 +129,17 @@ public class SemanticChecker implements ASTVisitor{
     }
     @Override public void visit(classConstructNode it){}
     @Override public void visit(varDeclareNode it){
+        if(it.type.btype== Type.basicType.Class){
+            if(!gScope.classMember.containsKey(it.type.Identifier)){
+                throw new semanticError("Invalid Type", it.pos);
+            }
+        }
+        if(gScope.funcMember.containsKey(it.name)){
+            throw new semanticError("Re-definition", it.pos);
+        }
+        if(currentScope.containsVariable(it.name, false)){
+            throw new semanticError("Re-definition", it.pos);
+        }
         if(it.expression!=null){
             it.expression.accept(this);
             if (it.expression.type.btype == Type.basicType.Null) {
@@ -139,7 +150,7 @@ public class SemanticChecker implements ASTVisitor{
                 throw new semanticError("type not match", it.pos);
             }
         }
-
+        currentScope.defineVariable(it.name, it.type, it.pos);
     }
     @Override public void visit(parameterNode it){}
     @Override public void visit(funcDefParameterNode it){}
@@ -167,18 +178,35 @@ public class SemanticChecker implements ASTVisitor{
         currentScope = currentScope.parentScope();
     }
     @Override public void visit(classDefNode it){
-        currentScope = new Scope(currentScope);
-        currentScope.isClass = true;
+        currentScope = new ClassScope(currentScope);
+        currentScope.className = it.name;
 
         if(it.constructor!=null)it.constructor.accept(this);
-        for(varDefStmtNode var : it.varList){
+        if(currentScope instanceof ClassScope)((ClassScope) currentScope).funcMember = it.funcList;
+        for(varDeclareNode var : it.varList.values()){
             var.accept(this);
         }
-        for(funcDefNode func : it.funcList){
+        for(funcDefNode func : it.funcList.values()){
             func.accept(this);
         }
 
         currentScope = currentScope.parentScope();
+
+        /*
+         for (var varDef: it.varMap.values()) {
+         varDef.accept(this);
+         }
+         if (currentScope instanceof ClassScope) ((ClassScope) currentScope).funcMember = it.funcMap;
+         for (var funcDef: it.funcMap.values()) {
+         if (funcDef.funcName.equals(it.className)) throw new Error("SemanticError", "Multiple Definitions", it.pos);
+         funcDef.accept(this);
+         }
+         if (it.constructor != null) {
+         if (!it.constructor.className.equals(it.className))
+         throw new Error("SemanticError", "constructor has different function name with the class", it.pos);
+         it.constructor.accept(this);
+         }
+         currentScope = currentScope.parentScope;*/
     }
     @Override public void visit(atomExprNode it){
         if (it.pritype == atomExprNode.primaryType.Int) {
@@ -207,7 +235,7 @@ public class SemanticChecker implements ASTVisitor{
                 for (var para : target2.parameterList.parameters) {
                     paras.add(para.type);
                 }
-                it.type = new Type(target2.type, paras);
+                it.type = new Type(target2.type);
                 //it.type.isLeftValue = false;
             }
 
@@ -322,7 +350,7 @@ public class SemanticChecker implements ASTVisitor{
         else tmp = new Type(it.type.btype, it.type.dim, true);
         for(varDeclareNode var : it.varDeclarations){
             var.accept(this);
-            currentScope.defineVariable(var.name, tmp, var.pos);
+            //currentScope.defineVariable(var.name, tmp, var.pos);
         }
         /*if (it.type.isClass && !globalScope.classMember.containsKey(it.type.typeName))
             throw new Error("SemanticError", "invalid variable definition type", it.pos);
@@ -340,7 +368,6 @@ public class SemanticChecker implements ASTVisitor{
 
     @Override
     public void visit(newArrayExprNode it){
-
         if(it.arrayLiteral!=null)it.arrayLiteral.accept(this);
         for(ExpressionNode expr : it.exprList){
             expr.accept(this);

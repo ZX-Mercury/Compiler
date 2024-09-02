@@ -2,6 +2,8 @@ package AST.Expression;
 
 import AST.ASTVisitor;
 import Util.position;
+import Util.Type;
+import Util.error.semanticError;
 
 public class memberExprNode extends ExpressionNode {
     public ExpressionNode expr;
@@ -16,6 +18,27 @@ public class memberExprNode extends ExpressionNode {
     @Override
     public void checkType () {
         //TODO: type = expr.type.getMemberType(member);
+        if(expr.type == null) {
+            throw new semanticError("null pointer", pos);
+        }
+        if(expr.type.btype==Type.basicType.String) {
+            if (member.equals("length") || member.equals("parseInt") || member.equals("ord")) {
+                type = new Type(Type.basicType.Int, 0, false);
+            } else if (member.equals("substring")) {
+                type = new Type(Type.basicType.String, 0, false);
+            } else {
+                throw new semanticError("String has no member named " + member, pos);
+            }
+        } else if(expr.type.btype==Type.basicType.Int && expr.type.dim>0) {
+            if(member.equals("size")) {
+                type = new Type(Type.basicType.Int, 0, false);
+            } else {
+                throw new semanticError("Array has no member named " + member, pos);
+            }
+        }
+        else{
+            //type = new Type();
+        }
     }
     @Override
     public void accept (ASTVisitor visitor) {

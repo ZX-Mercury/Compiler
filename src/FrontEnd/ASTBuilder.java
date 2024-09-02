@@ -120,8 +120,17 @@ public class ASTBuilder extends MxBaseVisitor<ASTNode> {
     public ASTNode visitClassDef (MxParser.ClassDefContext ctx) {
         classDefNode classDef = new classDefNode(new position(ctx), ctx.Identifier().toString()) ;
         if (ctx.classConstruct() != null) classDef.constructor = (classConstructNode) visit (ctx.classConstruct()) ;
-        ctx.varDefStmt().forEach(v -> classDef.varList.add ((varDefStmtNode) visit (v)));
-        ctx.funcDef().forEach(v -> classDef.funcList.add((funcDefNode) visit (v)));
+        //ctx.varDefStmt().forEach(v -> classDef.varList.add ((varDefStmtNode) visit (v)));
+        for(var v : ctx.varDefStmt()) {
+            var tmp = (varDefStmtNode) visit(v);
+            for(var tmp2 : tmp.varDef.varDeclarations)
+                classDef.varList.put(tmp2.name, tmp2);
+        }
+        //ctx.funcDef().forEach(v -> classDef.funcList.add((funcDefNode) visit (v)));
+        for(var v : ctx.funcDef()) {
+            var tmp = (funcDefNode) visit(v);
+            classDef.funcList.put(tmp.name, tmp);
+        }
         return classDef ;
     }
 

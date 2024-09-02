@@ -1,8 +1,6 @@
 
 package Util.Scope;
 
-import AST.*;
-
 import AST.Definition.classDefNode;
 import AST.Definition.funcDefNode;
 import AST.Definition.funcDefParameterNode;
@@ -11,7 +9,6 @@ import Util.Type;
 import Util.error.semanticError;
 import Util.position;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 public class globalScope extends Scope {
@@ -20,12 +17,12 @@ public class globalScope extends Scope {
 
     public void addFunc(funcDefNode it){
         if(funcMember.containsKey(it.name))
-            throw new semanticError("Re-definition", it.pos);
+            throw new semanticError("Duplicated definition:" + it.name, it.pos);
         funcMember.put(it.name, it);
     }
     public void addClass(classDefNode it){
         if(classMember.containsKey(it.name))
-            throw new semanticError("Re-definition", it.pos);
+            throw new semanticError("Duplicated definition:" + it.name, it.pos);
         classMember.put(it.name, it);
     }
     public funcDefNode getFunc(String name){
@@ -40,7 +37,8 @@ public class globalScope extends Scope {
         addBuiltinFunc();
     }
     private void addBuiltinFunc() {
-        funcDefParameterNode para = new funcDefParameterNode(null);
+        funcDefParameterNode para_empty = new funcDefParameterNode(null);
+
 //        void print(string str);
         funcDefParameterNode para_print = new funcDefParameterNode(null);
         para_print.parameters.add(new parameterNode(null,new Type(Type.basicType.String,0,false),"__str"));
@@ -76,13 +74,13 @@ public class globalScope extends Scope {
 //        string getString();
         Type fcty_getString = new Type (Type.basicType.String,0,false);
         funcDefNode tmp5 = new funcDefNode(null, fcty_getString,
-                "getString",para,null);
+                "getString", para_empty,null);
         funcMember.put("getString", tmp5);
 
 //        int getInt();
         Type fcty_getInt = new Type (Type.basicType.Int,0,false);
         funcDefNode tmp6 = new funcDefNode(null, fcty_getInt,
-                "getInt",para,null);
+                "getInt", para_empty,null);
         funcMember.put("getInt", tmp6);
 
 //        string toString(int i);
