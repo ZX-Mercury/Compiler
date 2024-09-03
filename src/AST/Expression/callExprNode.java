@@ -6,10 +6,12 @@ import Util.error.semanticError;
 import Util.Type;
 import Util.position;
 import Util.typeCmp;
+import AST.Definition.funcDefNode;
 
 import java.util.ArrayList;
 
 public class callExprNode extends ExpressionNode {
+    funcDefNode function ;
     public ExpressionNode functionIdentifier ;
     public ArrayList<ExpressionNode> paraList ;
 

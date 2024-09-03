@@ -45,7 +45,7 @@ public class binaryExprNode extends ExpressionNode {
             }
         }
         else if(binaryOp.equals(binaryOperator.Equal) || binaryOp.equals(binaryOperator.NotEqual)) {
-            if(lhs.type.btype.equals(rhs.type.btype)){
+            if(lhs.type.btype.equals(rhs.type.btype) || lhs.type.btype.equals(Type.basicType.Null) || rhs.type.btype.equals(Type.basicType.Null)){
                 type = new Type(Type.basicType.Bool,0,false);
             }
             else{

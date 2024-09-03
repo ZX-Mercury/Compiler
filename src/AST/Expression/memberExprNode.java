@@ -17,7 +17,7 @@ public class memberExprNode extends ExpressionNode {
 
     @Override
     public void checkType () {
-        //TODO: type = expr.type.getMemberType(member);
+        //Only applicable to situations where expr is not a class
         if(expr.type == null) {
             throw new semanticError("null pointer", pos);
         }
@@ -36,8 +36,8 @@ public class memberExprNode extends ExpressionNode {
                 throw new semanticError("Array has no member named " + member, pos);
             }
         }
-        else{
-            //type = new Type();
+        else if(expr.type.btype==Type.basicType.Int||expr.type.btype==Type.basicType.Bool) {
+            throw new semanticError("Primitive type has no member named " + member, pos);
         }
     }
     @Override

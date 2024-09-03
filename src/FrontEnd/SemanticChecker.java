@@ -37,7 +37,8 @@ public class SemanticChecker implements ASTVisitor{
 
     @Override public void visit(returnStmtNode it){
         Scope tmp = currentScope;
-        while(!(tmp instanceof FuncScope)&&tmp!=null) tmp = tmp.parentScope;
+        while(!(tmp instanceof FuncScope)&&tmp!=null)
+            tmp = tmp.parentScope;
         if(tmp==null){
             throw new semanticError("return statement not in function", it.pos);
         }
@@ -46,7 +47,11 @@ public class SemanticChecker implements ASTVisitor{
         }
         if(it.retExpr!=null){
             it.retExpr.accept(this);
-            if(!(it.retExpr.type.btype==currentScope.fucRetType.btype)||it.retExpr.type.dim!=currentScope.fucRetType.dim){
+            if(it.retExpr.type.btype==Type.basicType.Null){
+                if(currentScope.fucRetType.btype!=Type.basicType.Class)
+                    throw new semanticError("return type not match", it.pos);
+            }
+            else if(!(it.retExpr.type.btype==currentScope.fucRetType.btype)||it.retExpr.type.dim!=currentScope.fucRetType.dim){
                 throw new semanticError("return type not match", it.pos);
             }
         }
@@ -64,7 +69,7 @@ public class SemanticChecker implements ASTVisitor{
                     it.expression.pos);
 
         currentScope = new Scope(currentScope);
-        if (it.falseStatement != null) it.trueStatement.accept(this);
+        if (it.trueStatement != null) it.trueStatement.accept(this);
         currentScope = currentScope.parentScope();
 
         currentScope = new Scope(currentScope);
@@ -198,8 +203,8 @@ public class SemanticChecker implements ASTVisitor{
         }
         it.suite.accept(this);
         if(!(currentScope.fucRetType.btype==Type.basicType.Void)
-                &&!((FuncScope)currentScope).returned
-                &&!(Objects.equals(it.name, "main"))){
+                &&!(Objects.equals(it.name, "main"))
+                &&!((FuncScope)currentScope).returned){
             throw new semanticError("function not return", it.pos);
         }
         currentScope = currentScope.parentScope();
@@ -360,13 +365,26 @@ public class SemanticChecker implements ASTVisitor{
         for(ExpressionNode expr : it.paraList){
             expr.accept(this);
         }
+    if(it.functionIdentifier instanceof atomExprNode){
+            var tmp=currentScope;
+            while(tmp!=null && !(tmp instanceof ClassScope)) tmp=tmp.parentScope;
+            funcDefNode target2 = null;
+            if(tmp!=null) target2= ((ClassScope)tmp).getFuncType(((atomExprNode)it.functionIdentifier).identifier,true);
 
-        /*var tmp=currentScope;
-        while(tmp!=null && !(tmp instanceof ClassScope)) tmp=tmp.parentScope;
-        funcDefNode target2 = null;
-        if(tmp!=null) target2= ((ClassScope)tmp).getFuncType(it.functionIdentifier.identifier,true);
-
-        funcDefNode target3 = gScope.getFunc(it.identifier);*/
+            funcDefNode target3 = gScope.getFunc(((atomExprNode)it.functionIdentifier).identifier);
+            var target = target2!=null ? target2 : target3;
+            int rightsize = it.paraList==null?0:it.paraList.size();
+            int currentsize = target.parameterList==null?0:target.parameterList.parameters.size();
+            if(rightsize!=currentsize){
+                throw new semanticError("Wrong Number of Parameters", it.pos);
+            }
+            /*for(int i=0;i<it.paraList.size();i++){
+                if(!target.parameterList.parameters.get(i).type.equals(it.paraList.get(i).type)){
+                    throw new semanticError("Not a parameter type", it.pos);
+                }
+            }
+            At present, there is no need for it.*/
+    }
         it.checkType();
     }
     @Override public void visit(arrayExprNode it){
