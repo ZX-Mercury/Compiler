@@ -23,19 +23,19 @@ public class unaryExprNode extends ExpressionNode {
     public void checkType() {
         if (unaryOp.equals(unaryOperator.Plus) || unaryOp.equals(unaryOperator.Minus)) {
             if (!expression.type.btype.equals(Type.basicType.Int)) {
-                throw new semanticError("Semantic Error: type not match", pos);
+                throw new semanticError("Type Mismatch", pos);
             }
             type = new Type(Type.basicType.Int, 0, false);
         }
         else if (unaryOp.equals(unaryOperator.Not)) {
             if (!expression.type.btype.equals(Type.basicType.Bool)) {
-                throw new semanticError("Semantic Error: type not match", pos);
+                throw new semanticError("Type Mismatch", pos);
             }
             type = new Type(Type.basicType.Bool, 0, false);
         }
         else if (unaryOp.equals(unaryOperator.Tilde)) {
             if (!expression.type.btype.equals(Type.basicType.Int)) {
-                throw new semanticError("Semantic Error: type not match", pos);
+                throw new semanticError("Type Mismatch", pos);
             }
             type = new Type(Type.basicType.Int, 0, false);
         }

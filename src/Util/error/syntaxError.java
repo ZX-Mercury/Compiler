@@ -4,6 +4,6 @@ import Util.position;
 public class syntaxError extends error {
 
     public syntaxError(String msg, position pos) {
-        super("Syntax Error: " + msg, pos);
+        super(msg, pos);
     }
 }

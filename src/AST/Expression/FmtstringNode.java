@@ -24,12 +24,12 @@ public class FmtstringNode extends ExpressionNode {
     public void checkType() {
         for(ExpressionNode node : expr){
             if(node.type.dim != 0){
-                throw new Util.error.semanticError("Semantic Error: fmtstring cannot contain array", pos);
+                throw new Util.error.semanticError("Type Mismatch", pos);
             }
             if(node.type.btype != Type.basicType.String
                     && node.type.btype != Type.basicType.Int
                     && node.type.btype != Type.basicType.Bool){
-                throw new Util.error.semanticError("Semantic Error: fmtstring cannot contain this type", pos);
+                throw new Util.error.semanticError("Type Mismatch", pos);
             }
         }
         type = new Type(Type.basicType.String, 0, false);

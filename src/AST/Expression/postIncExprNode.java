@@ -22,7 +22,7 @@ public class postIncExprNode extends ExpressionNode {
     @Override
     public void checkType () {
         if (expression.type.btype != Type.basicType.Int) {
-            throw new semanticError ("integer expected", pos) ;
+            throw new semanticError ("Type Mismatch", pos) ;
         }
         if(!expression.type.isLeftValue){
             throw new semanticError("not assignable", pos);

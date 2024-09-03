@@ -25,15 +25,15 @@ public class assignExprNode extends ExpressionNode {
                 throw new semanticError("lhs is not assignable", pos);
             }
             if(lhs.type.dim == 0 && lhs.type.btype != Type.basicType.Class){
-                throw new semanticError("Null can only be assigned to non-array or class type", pos);
+                throw new semanticError("Type Mismatch", pos);
             }
         }
         else {
             if (!typeCmp.cmptype(lhs.type, rhs.type)) {
-                throw new semanticError("type not match", pos);
+                throw new semanticError("Type Mismatch", pos);
             }
             if (lhs.type.dim != rhs.type.dim) {
-                throw new semanticError("dimension not match", pos);
+                throw new semanticError("Type Mismatch", pos);
             }
             if (!lhs.type.isLeftValue) {
                 throw new semanticError("lhs is not assignable", pos);

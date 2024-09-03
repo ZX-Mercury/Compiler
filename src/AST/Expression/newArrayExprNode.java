@@ -19,12 +19,12 @@ public class newArrayExprNode extends ExpressionNode {
     public void checkType() {
         for(ExpressionNode expr : exprList) {
             if(expr.type.btype!=Type.basicType.Int) {
-                throw new semanticError("new array expr should have int type", pos);
+                throw new semanticError("Type Mismatch", pos);
             }
         }
         if(arrayLiteral != null) {
             if(arrayLiteral.type.dim != type.dim) {
-                throw new semanticError("new array expr should have same size", pos);
+                throw new semanticError("Type Mismatch", pos);
             }
         }
     }

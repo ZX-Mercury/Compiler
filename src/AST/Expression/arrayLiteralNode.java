@@ -30,7 +30,7 @@ public class arrayLiteralNode extends LiteralNode {
         }
         for(LiteralNode element:elements){
             if((element.type.btype!=tmp.btype||element.type.dim!=tmp.dim)&&!(element.type.btype==null)){
-                throw new semanticError("Semantic Error: type not match", pos);
+                throw new semanticError("Type Mismatch", pos);
             }
         }
         type = new Type(tmp);

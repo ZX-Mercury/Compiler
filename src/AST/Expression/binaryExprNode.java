@@ -32,7 +32,7 @@ public class binaryExprNode extends ExpressionNode {
                 type = new Type(Type.basicType.String,0,false);
             }
             else{
-                throw new semanticError("Semantic Error: type not match", pos);
+                throw new semanticError("Type Mismatch", pos);
             }
         }
         else if(binaryOp.equals(binaryOperator.Minus) || binaryOp.equals(binaryOperator.Mul)
@@ -41,7 +41,7 @@ public class binaryExprNode extends ExpressionNode {
                 type = new Type(Type.basicType.Int,0,false);
             }
             else{
-                throw new semanticError("Semantic Error: type not match", pos);
+                throw new semanticError("Type Mismatch", pos);
             }
         }
         else if(binaryOp.equals(binaryOperator.Equal) || binaryOp.equals(binaryOperator.NotEqual)) {
@@ -49,7 +49,7 @@ public class binaryExprNode extends ExpressionNode {
                 type = new Type(Type.basicType.Bool,0,false);
             }
             else{
-                throw new semanticError("Semantic Error: type not match", pos);
+                throw new semanticError("Type Mismatch", pos);
             }
         }
         else if(binaryOp.equals(binaryOperator.Less) || binaryOp.equals(binaryOperator.LessEqual)
@@ -61,7 +61,7 @@ public class binaryExprNode extends ExpressionNode {
                 type = new Type(Type.basicType.Bool,0,false);
             }
             else{
-                throw new semanticError("Semantic Error: type not match", pos);
+                throw new semanticError("Type Mismatch", pos);
             }
         }
 
@@ -70,7 +70,7 @@ public class binaryExprNode extends ExpressionNode {
                 type = new Type(Type.basicType.Bool,0,false);
             }
             else{
-                throw new semanticError("Semantic Error: type not match", pos);
+                throw new semanticError("Type Mismatch", pos);
             }
         }
         else if(binaryOp.equals(binaryOperator.And) || binaryOp.equals(binaryOperator.Or)
@@ -80,7 +80,7 @@ public class binaryExprNode extends ExpressionNode {
                 type = new Type(Type.basicType.Int,0,false);
             }
             else{
-                throw new semanticError("Semantic Error: type not match", pos);
+                throw new semanticError("Type Mismatch", pos);
             }
         }
     }

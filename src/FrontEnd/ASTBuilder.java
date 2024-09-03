@@ -137,7 +137,7 @@ public class ASTBuilder extends MxBaseVisitor<ASTNode> {
             var tmp = (varDefStmtNode) visit(v);
             for(var tmp2 : tmp.varDef.varDeclarations) {
                 if (classDef.varList.containsKey(tmp2.name)) {
-                    throw new semanticError("Duplicate variable name in class definition",tmp.pos);
+                    throw new semanticError("Multiple Definitions",tmp.pos);
                 }
                     classDef.varList.put(tmp2.name, tmp2);
             }
@@ -146,7 +146,7 @@ public class ASTBuilder extends MxBaseVisitor<ASTNode> {
         for(var v : ctx.funcDef()) {
             var tmp = (funcDefNode) visit(v);
             if(classDef.funcList.containsKey(tmp.name)) {
-                throw new semanticError("Duplicate function name in class definition",tmp.pos);
+                throw new semanticError("Multiple Definitions",tmp.pos);
             }
             classDef.funcList.put(tmp.name, tmp);
         }

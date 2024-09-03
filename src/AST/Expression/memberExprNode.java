@@ -27,17 +27,17 @@ public class memberExprNode extends ExpressionNode {
             } else if (member.equals("substring")) {
                 type = new Type(Type.basicType.String, 0, false);
             } else {
-                throw new semanticError("String has no member named " + member, pos);
+                throw new semanticError("Undefined Identifier", pos);
             }
         } else if(expr.type.btype==Type.basicType.Int && expr.type.dim>0) {
             if(member.equals("size")) {
                 type = new Type(Type.basicType.Int, 0, false);
             } else {
-                throw new semanticError("Array has no member named " + member, pos);
+                throw new semanticError("Undefined Identifier", pos);
             }
         }
         else if(expr.type.btype==Type.basicType.Int||expr.type.btype==Type.basicType.Bool) {
-            throw new semanticError("Primitive type has no member named " + member, pos);
+            throw new semanticError("Undefined Identifier", pos);
         }
     }
     @Override
