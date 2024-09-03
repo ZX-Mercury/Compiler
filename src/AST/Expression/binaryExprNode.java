@@ -57,6 +57,9 @@ public class binaryExprNode extends ExpressionNode {
             if(lhs.type.btype.equals(Type.basicType.Int) && rhs.type.btype.equals(Type.basicType.Int)){
                 type = new Type(Type.basicType.Bool,0,false);
             }
+            else if(lhs.type.btype.equals(Type.basicType.String) && rhs.type.btype.equals(Type.basicType.String)){
+                type = new Type(Type.basicType.Bool,0,false);
+            }
             else{
                 throw new semanticError("Semantic Error: type not match", pos);
             }

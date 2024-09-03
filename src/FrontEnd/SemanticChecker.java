@@ -141,6 +141,14 @@ public class SemanticChecker implements ASTVisitor{
         currentScope.fucRetType = tmp;
         it.suite.accept(this);
         currentScope = currentScope.parentScope;
+        /*
+        if(it.parameterList!=null) {
+            it.parameterList.accept(this);
+            for(var paras : it.parameterList.parameters){
+                currentScope.defineVariable(paras.name, paras.type, it.pos);
+            }
+        }
+        it.suite.accept(this);*/
     }
     @Override public void visit(varDeclareNode it){
         if(it.type.btype== Type.basicType.Class){
@@ -195,18 +203,18 @@ public class SemanticChecker implements ASTVisitor{
         currentScope = new ClassScope(currentScope);
         currentScope.className = it.name;
 
-        if(it.constructor!=null) {
-            it.constructor.accept(this);
-            if(!Objects.equals(it.constructor.className, it.name)){
-                throw new semanticError("constructor has different function name with the class", it.constructor.pos);
-            }
-        }
-        if(currentScope instanceof ClassScope)((ClassScope) currentScope).funcMember = it.funcList;
         for(varDeclareNode var : it.varList.values()){
             var.accept(this);
         }
+        if(currentScope instanceof ClassScope)((ClassScope) currentScope).funcMember = it.funcList;
         for(funcDefNode func : it.funcList.values()){
             func.accept(this);
+        }
+        if(it.constructor!=null) {
+            it.constructor.accept(this);
+            if(!Objects.equals(it.constructor.className, it.name)){
+                throw new semanticError("constructor name not match", it.constructor.pos);
+            }
         }
 
         currentScope = currentScope.parentScope();
@@ -292,7 +300,8 @@ public class SemanticChecker implements ASTVisitor{
         if (it.expr.type.btype == Type.basicType.Class || it.expr.type.btype == Type.basicType.This) {
             if (!gScope.classMember.containsKey(it.expr.type.Identifier))
                 throw new semanticError("Undefined member", it.pos);
-            classDefNode classDef = gScope.getClass(it.expr.type.Identifier);
+            currentScope.getType(it.expr.type.Identifier, true);
+            /*classDefNode classDef = gScope.getClass(it.expr.type.Identifier);
             if (classDef.varList.containsKey(it.member)) {
                 it.type = classDef.varList.get(it.member).type;
                 it.type.isLeftValue = true;
@@ -300,7 +309,7 @@ public class SemanticChecker implements ASTVisitor{
                 funcDefNode function = classDef.funcList.get(it.member);
                 it.type = new Type(function.retType);
                 it.type.isLeftValue = false;
-            } else throw new semanticError("Undefined member" , it.pos);
+            } else throw new semanticError("Undefined member" , it.pos);*/
         }
         else {
             it.checkType();

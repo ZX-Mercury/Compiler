@@ -46,6 +46,15 @@ public class ASTBuilder extends MxBaseVisitor<ASTNode> {
     public ASTNode visitNewArrayExpr(MxParser.NewArrayExprContext ctx){
         newArrayExprNode newArray = new newArrayExprNode(new position(ctx)) ;
         ctx.expression().forEach(v -> newArray.exprList.add((ExpressionNode) visit(v))) ;
+        var k = ctx.getText();
+        int ind = newArray.exprList.size();
+        for (int i = 0; i < k.length()&&ind>=0; i++) {
+            if (k.charAt(i) == '[') {
+                if(k.charAt(i+1) == ']' && ind!=0)
+                    throw new semanticError("index error", new position(ctx));
+                ind--;
+            }
+        }
         newArray.arrayLiteral = ctx.arrayLiteral() == null ? null : (arrayLiteralNode) visit(ctx.arrayLiteral()) ;
         if(ctx.Identifier()!=null) newArray.type = new Type(ctx.Identifier().toString(), ctx.LeftBracket().size(), false) ;
         else if(ctx.Int()!=null) newArray.type = new Type(Type.basicType.Int, ctx.LeftBracket().size(), false) ;
@@ -112,6 +121,7 @@ public class ASTBuilder extends MxBaseVisitor<ASTNode> {
             else if(ctx.varType(i).Bool()!=null) type = new Type(Type.basicType.Bool, 0, false) ;
             else if(ctx.varType(i).String()!=null) type = new Type(Type.basicType.String, 0, false);
             else /*(ctx.varType(i).Identifier()!=null)*/ type = new Type(ctx.varType(i).Identifier().toString(), 0, false) ;
+            type.dim=ctx.varType().get(i).LeftBracket().size();
             String name = ctx.Identifier(i).toString() ;
             parameterList.parameters.add(new parameterNode(new position(ctx), type, name)) ;
         }
