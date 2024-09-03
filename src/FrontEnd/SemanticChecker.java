@@ -64,7 +64,7 @@ public class SemanticChecker implements ASTVisitor{
                     it.expression.pos);
 
         currentScope = new Scope(currentScope);
-        it.trueStatement.accept(this);
+        if (it.falseStatement != null) it.trueStatement.accept(this);
         currentScope = currentScope.parentScope();
 
         currentScope = new Scope(currentScope);
@@ -77,9 +77,11 @@ public class SemanticChecker implements ASTVisitor{
             throw new semanticError("Semantic Error: type not match. It should be bool",
                     it.condition.pos);
         currentScope = new Scope(currentScope);
-        currentScope.isLoop = true;
-        it.statement.accept(this);
-        currentScope = currentScope.parentScope();
+        if(it.statement!=null) {//while(true); is legal
+            currentScope.isLoop = true;
+            it.statement.accept(this);
+            currentScope = currentScope.parentScope();
+        }
     }
     @Override public void visit(forDefStmtNode it){
         currentScope = new Scope(currentScope);
@@ -92,7 +94,7 @@ public class SemanticChecker implements ASTVisitor{
         }
         if(it.step!=null) it.step.accept(this);
         currentScope.isLoop = true;
-        it.statement.accept(this);
+        if(it.statement!=null)it.statement.accept(this);
         currentScope = currentScope.parentScope();
     }
     @Override public void visit(forExpStmtNode it){
@@ -104,29 +106,31 @@ public class SemanticChecker implements ASTVisitor{
                         it.condition.pos);
             if (it.step != null) it.step.accept(this);
         }
+        if(it.statement!=null){
         currentScope = new Scope(currentScope);
-        currentScope.isLoop = true;
-        it.statement.accept(this);
-        currentScope = currentScope.parentScope();
+            currentScope.isLoop = true;
+            it.statement.accept(this);
+            currentScope = currentScope.parentScope();
+        }
     }
     @Override public void visit(suiteNode it){
         if (!it.statementNodes.isEmpty()) {
             currentScope = new Scope(currentScope);
             for (ASTNode stmt : it.statementNodes)
-                stmt.accept(this);
+                if(stmt!=null) stmt.accept(this);
             currentScope = currentScope.parentScope();
         }
     }
     @Override public void visit(breakStmt it){
         var tmp = currentScope;
-        while (tmp != null && tmp.isLoop) tmp = tmp.parentScope;
+        while (tmp != null && !tmp.isLoop) tmp = tmp.parentScope;
         if (tmp==null) {
             throw new semanticError("break statement not in loop", it.pos);
         }
     }
     @Override public void visit(continueStmtNode it){
         var tmp = currentScope;
-        while (tmp != null && tmp.isLoop) tmp = tmp.parentScope;
+        while (tmp != null && !tmp.isLoop) tmp = tmp.parentScope;
         if (tmp==null) {
             throw new semanticError("continue statement not in loop", it.pos);
         }
@@ -165,6 +169,7 @@ public class SemanticChecker implements ASTVisitor{
         if(it.expression!=null){
             it.expression.accept(this);
             if (it.expression.type.btype == Type.basicType.Null) {
+                //it.type.btype = Type.basicType.Null;
             }
             else if (it.expression.type.btype == Type.basicType.Function
                     &&it.type.btype==it.expression.type.functionReturnType.btype){}
@@ -254,8 +259,14 @@ public class SemanticChecker implements ASTVisitor{
             it.type.Identifier = className;
         } else if (it.identifier != null) {
             Type target1 = currentScope.getType(it.identifier, true);
-            funcDefNode target2 = gScope.getFunc(it.identifier);
-            if (target1 == null && target2 == null)  throw new semanticError("Undefined Identifier" , it.pos);
+
+            var tmp=currentScope;
+            while(tmp!=null && !(tmp instanceof ClassScope)) tmp=tmp.parentScope;
+            funcDefNode target2 = null;
+            if(tmp!=null) target2= ((ClassScope)tmp).getFuncType(it.identifier,true);
+
+            funcDefNode target3 = gScope.getFunc(it.identifier);
+            if (target1 == null && target2 == null && target3 == null)  throw new semanticError("Undefined Identifier" , it.pos);
             if (target1 != null) it.type = target1;
             if (target2 != null) {
                 ArrayList<Type> paras = new ArrayList<>();
@@ -265,6 +276,16 @@ public class SemanticChecker implements ASTVisitor{
                     }
                 }
                 it.type = new Type(target2.retType);
+                //it.type.isLeftValue = false;
+            }
+            if (target3 != null) {
+                ArrayList<Type> paras = new ArrayList<>();
+                if(target3.parameterList!=null) {
+                    for (var para : target3.parameterList.parameters) {
+                        paras.add(para.type);
+                    }
+                }
+                it.type = new Type(target3.retType);
                 //it.type.isLeftValue = false;
             }
 
@@ -297,30 +318,55 @@ public class SemanticChecker implements ASTVisitor{
     }
     @Override public void visit(memberExprNode it){
         it.expr.accept(this);
-        if (it.expr.type.btype == Type.basicType.Class || it.expr.type.btype == Type.basicType.This) {
-            if (!gScope.classMember.containsKey(it.expr.type.Identifier))
-                throw new semanticError("Undefined member", it.pos);
-            currentScope.getType(it.expr.type.Identifier, true);
-            /*classDefNode classDef = gScope.getClass(it.expr.type.Identifier);
-            if (classDef.varList.containsKey(it.member)) {
-                it.type = classDef.varList.get(it.member).type;
-                it.type.isLeftValue = true;
-            } else if (classDef.funcList.containsKey(it.member)) {
-                funcDefNode function = classDef.funcList.get(it.member);
-                it.type = new Type(function.retType);
-                it.type.isLeftValue = false;
-            } else throw new semanticError("Undefined member" , it.pos);*/
+        if(it.expr.type.dim!= 0){
+           if(!Objects.equals(it.member, "size"))
+               throw new semanticError("Invalid member", it.pos);
+           it.type = new Type(Type.basicType.Int, 0, false);
         }
         else {
-            it.checkType();
+            if (it.expr.type.btype == Type.basicType.Class || it.expr.type.btype == Type.basicType.This) {
+                if (!gScope.classMember.containsKey(it.expr.type.Identifier))
+                    throw new semanticError("Undefined member", it.pos);
+                var a = gScope.getClass(it.expr.type.Identifier);
+                var b = a.funcList.get(it.member);
+                var c = a.varList.get(it.member);
+                if(b!=null) {
+                    it.type = new Type(b.retType);
+                    it.type.isLeftValue = false;
+                }
+                else if(c!=null) {
+                    it.type = c.type;
+                    it.type.isLeftValue = true;
+                }
+                else throw new semanticError("fnmdp", it.pos);
+            } else {
+                it.checkType();
+            }
         }
     }
+
+    /*classDefNode classDef = gScope.getClass(it.expr.type.Identifier);
+    if (classDef.varList.containsKey(it.member)) {
+        it.type = classDef.varList.get(it.member).type;
+        it.type.isLeftValue = true;
+    } else if (classDef.funcList.containsKey(it.member)) {
+        funcDefNode function = classDef.funcList.get(it.member);
+        it.type = new Type(function.retType);
+        it.type.isLeftValue = false;
+    } else throw new semanticError("Undefined member" , it.pos);*/
     @Override public void visit(callExprNode it){
         it.functionIdentifier.accept(this);
        //it.functionIdentifier.type=currentScope.getType(it.functionIdentifier., true);
         for(ExpressionNode expr : it.paraList){
             expr.accept(this);
         }
+
+        /*var tmp=currentScope;
+        while(tmp!=null && !(tmp instanceof ClassScope)) tmp=tmp.parentScope;
+        funcDefNode target2 = null;
+        if(tmp!=null) target2= ((ClassScope)tmp).getFuncType(it.functionIdentifier.identifier,true);
+
+        funcDefNode target3 = gScope.getFunc(it.identifier);*/
         it.checkType();
     }
     @Override public void visit(arrayExprNode it){

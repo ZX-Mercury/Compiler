@@ -16,6 +16,13 @@ public class newArrayExprNode extends ExpressionNode {
         this.exprList = new ArrayList<>();
     }
 
+    public void checkType() {
+        for(ExpressionNode expr : exprList) {
+            if(expr.type.btype!=Type.basicType.Int) {
+                throw new semanticError("new array expr should have int type", pos);
+            }
+        }
+    }
     @Override
     public void accept(ASTVisitor visitor) {
         visitor.visit(this);

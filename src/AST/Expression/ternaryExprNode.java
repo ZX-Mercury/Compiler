@@ -20,7 +20,9 @@ public class ternaryExprNode extends ExpressionNode {
         if (!condition.type.btype.equals (Type.basicType.Bool)) {
             throw new semanticError ("Semantic Error: type not match, bool expected",condition.pos) ;
         }
-        if (!trueExpr.type.btype.equals (falseExpr.type.btype)) {
+        if (!trueExpr.type.btype.equals (falseExpr.type.btype)
+        && !trueExpr.type.btype.equals (Type.basicType.Null)
+        && !falseExpr.type.btype.equals (Type.basicType.Null)) {
             throw new semanticError ("Semantic Error: type not match", pos) ;
         }
         type = new Type (trueExpr.type) ;
