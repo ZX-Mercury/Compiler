@@ -65,7 +65,7 @@ public class SemanticChecker implements ASTVisitor{
     @Override public void visit(ifStmtNode it){
         it.expression.accept(this);
         if (!it.expression.type.btype.equals(Type.basicType.Bool))
-            throw new semanticError("Type Mismatch",
+            throw new semanticError("Invalid Type",
                     it.expression.pos);
 
         currentScope = new Scope(currentScope);

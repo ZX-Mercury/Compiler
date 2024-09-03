@@ -15,6 +15,6 @@ public class MxErrorListener extends BaseErrorListener {
                             String msg,
                             RecognitionException e) {
 
-        throw new syntaxError(msg, new position(line, charPositionInLine));
+        throw new syntaxError("Invalid Identifier", new position(line, charPositionInLine));
     }
 }

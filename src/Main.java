@@ -18,8 +18,7 @@ import java.io.InputStream;
 
 public class Main {
     public static void main(String[] args) throws Exception {
-        //String name = "testcases/sema/ternary-package/ternary-expression-5.mx";//b3 7 8? 18 37 50 52 53 55
-        //func 1
+        //String name = "testcases/sema/const-array-package/const-array7.mx";//b3 7 8? 18 37 50 52 53 55
         //String name = "test.mx";
         //InputStream input = new FileInputStream(name);
         InputStream input = System.in;
@@ -39,8 +38,9 @@ public class Main {
             new SymbolCollector(gScope).visit(ASTRoot);
             new SemanticChecker(gScope).visit(ASTRoot);
         } catch (error er) {
-            System.err.println(er.toString());
-            throw new RuntimeException();
+            System.out.print(er.toString());
+            System.exit(1);
         }
+        System.exit(0);
     }
 }
