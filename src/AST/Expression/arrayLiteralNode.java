@@ -29,11 +29,12 @@ public class arrayLiteralNode extends LiteralNode {
             }
         }
         for(LiteralNode element:elements){
-            if(!element.type.equals(tmp)&&!(element.type.btype==null)){
+            if((element.type.btype!=tmp.btype||element.type.dim!=tmp.dim)&&!(element.type.btype==null)){
                 throw new semanticError("Semantic Error: type not match", pos);
             }
         }
         type = new Type(tmp);
+        type.dim++;
     }
     @Override
     public void accept(ASTVisitor visitor) {

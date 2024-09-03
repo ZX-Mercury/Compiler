@@ -22,6 +22,11 @@ public class newArrayExprNode extends ExpressionNode {
                 throw new semanticError("new array expr should have int type", pos);
             }
         }
+        if(arrayLiteral != null) {
+            if(arrayLiteral.type.dim != type.dim) {
+                throw new semanticError("new array expr should have same size", pos);
+            }
+        }
     }
     @Override
     public void accept(ASTVisitor visitor) {

@@ -181,6 +181,9 @@ public class SemanticChecker implements ASTVisitor{
             else if(it.expression.type.btype!=it.type.btype){
                 throw new semanticError("type not match", it.pos);
             }
+            if(it.expression.type.dim!=it.type.dim){
+                throw new semanticError("dimension not match", it.pos);
+            }
         }
         currentScope.defineVariable(it.name, it.type, it.pos);
     }
