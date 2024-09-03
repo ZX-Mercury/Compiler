@@ -373,6 +373,8 @@ public class SemanticChecker implements ASTVisitor{
             expr.accept(this);
         }
         it.checkType();
+        if(it.type.dim<0)
+            throw new semanticError("Dimension Out Of Bound", it.pos);
         if (it.type.btype == Type.basicType.Class) {
             if (!currentScope.members.containsKey(it.arrayName)){}
                 //throw new semanticError("invalid type for array", it.pos);
