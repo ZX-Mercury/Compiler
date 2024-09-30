@@ -2,6 +2,8 @@ import AST.RootNode;
 import FrontEnd.ASTBuilder;
 import FrontEnd.SymbolCollector;
 import FrontEnd.SemanticChecker;
+import MIR.IRBuilder;
+import MIR.IRPrinter;
 import Parser.MxLexer;
 import Parser.MxParser;
 import Util.MxErrorListener;
@@ -18,10 +20,10 @@ import java.io.InputStream;
 
 public class Main {
     public static void main(String[] args) throws Exception {
-        //String name = "testcases/sema/const-array-package/const-array7.mx";//b3 7 8? 18 37 50 52 53 55
-        //String name = "test.mx";
-        //InputStream input = new FileInputStream(name);
-        InputStream input = System.in;
+        //String name = "testcases/sema/const-array-package/const-array7.mx";
+        String name = "test.mx";
+        InputStream input = new FileInputStream(name);
+        //InputStream input = System.in;
 
         try {
             RootNode ASTRoot;
@@ -34,9 +36,13 @@ public class Main {
             parser.addErrorListener(new MxErrorListener());
             ParseTree parseTreeRoot = parser.program();
             ASTBuilder astBuilder = new ASTBuilder();
+
             ASTRoot = (RootNode) astBuilder.visit(parseTreeRoot);
             new SymbolCollector(gScope).visit(ASTRoot);
             new SemanticChecker(gScope).visit(ASTRoot);
+
+            new IRBuilder(gScope).visit(ASTRoot);
+            new IRPrinter(System.out).visitRoot(ASTRoot);
         } catch (error er) {
             System.out.print(er.toString());
             System.exit(1);

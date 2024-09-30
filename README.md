@@ -1,2 +1,2 @@
 # Compiler
-This is a (simply constructed) complier for Mx*.
+This is a (simply constructed) compiler for Mx*.
