@@ -3,15 +3,14 @@ import MIR.Instruction.Instruction;
 import MIR.IREntity.*;
 
 public class selectInst extends Instruction {
-    /*public localVar ret;
+    public localVar ret;
     public entity cond;
     public entity op1, op2;
-    public selectInst(IRType type, entity obj1, entity obj2, entity obj3, String name) {
-        ret = new localVar(type, name);
+    public selectInst(entity obj1, entity obj2, entity obj3, String name) {
         cond = obj1;
         op1 = obj2;
         op2 = obj3;
-    }*/
+    }
 
 
     /*@Override

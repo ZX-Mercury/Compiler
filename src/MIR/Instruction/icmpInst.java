@@ -20,23 +20,7 @@ public class icmpInst extends Instruction {
         this.rhs = rhs;
     }
 
-    /*@Override
-    public void removeUse(Entity entity) {
-        if (lhs == entity) lhs = null;
-        if (rhs == entity) rhs = null;
-    }
-
-    @Override
-    public void replaceUse(Entity old, Entity new_) {
-        if (lhs == old) lhs = new_;
-        if (rhs == old) rhs = new_;
-    }
-
-    @Override
-    public void replaceDef(Entity old, Entity new_) {
-        if (result == old) result = new_;
-    }
-
+/*
     @Override
     public String toString() {
         return result.toString() + " = icmp " + op.toString() + " " + lhs.type.toString() + " " + lhs.toString() + ", " + rhs.toString();

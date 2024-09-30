@@ -12,21 +12,7 @@ public class branchInst extends terminalInst {
         this.falseBranch = falseBranch;
     }
 
-/*    @Override
-    public void removeUse() {
-        cond.removeUse(this);
-    }
-
-    @Override
-    public void replaceUse(entity old, entity neww) {
-        if (cond == old) cond = neww;
-    }
-
-    @Override
-    public void addUseAndDef() {
-        cond.addUse(this);
-    }
-
+/*
     @Override
     public String toString() {
         return "br " + cond.toString() + ", " + then.toString() + ", " + els.toString();

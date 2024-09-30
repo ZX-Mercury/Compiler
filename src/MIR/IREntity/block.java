@@ -8,7 +8,7 @@ import MIR.Instruction.terminalInst;
 import MIR.Instruction.branchInst;
 import java.util.ArrayList;
 
-public class block {
+public class block extends entity {
     public String name;
     private ArrayList<Instruction> insts = new ArrayList<>();
     private terminalInst tailInst = null;

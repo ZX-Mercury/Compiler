@@ -1,4 +1,4 @@
 package MIR.IREntity;
 
-public class ptr {
+public class ptr extends entity{
 }
