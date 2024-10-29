@@ -1,11 +1,11 @@
 package MIR.Instruction;
 
-import MIR.IREntity.entity;
-//import
+import MIR.Value.*;
+
 public class loadInst extends Instruction {
-    public entity result;
-    public entity pointer;
-    public loadInst(entity result, entity pointer) {
+    public varLocal result;
+    public value pointer;
+    public loadInst(varLocal result, value pointer) {
         this.result = result;
         this.pointer = pointer;
     }

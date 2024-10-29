@@ -1,6 +1,6 @@
 package MIR.Instruction;
 
-import MIR.IREntity.entity;
+import MIR.Value.*;
 
 public class icmpInst extends Instruction {
     public enum icmpOpType {
@@ -9,11 +9,11 @@ public class icmpInst extends Instruction {
         sgt, sge, slt, sle
     }
 
-    public entity result;
+    public varLocal result;
     public icmpOpType op;
-    public entity lhs, rhs;
+    public value lhs, rhs;
 
-    public icmpInst(entity result, icmpOpType op, entity lhs, entity rhs) {
+    public icmpInst(varLocal result, icmpOpType op, value lhs, value rhs) {
         this.result = result;
         this.op = op;
         this.lhs = lhs;

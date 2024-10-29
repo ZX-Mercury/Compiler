@@ -1,10 +1,12 @@
 package MIR.Instruction;
 
 import MIR.IREntity.entity;
+import MIR.Value.value;
+
 public class retInst extends Instruction {
-    public entity retContent;
-    public entity retValue = null;
-    public retInst(entity retContent) {
-        this.retContent = retContent;
+    public value retValue = null;
+
+    public retInst(value retValue) {
+        this.retValue = retValue;
     }
 }

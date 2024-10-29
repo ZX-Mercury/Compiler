@@ -1,11 +1,13 @@
 package MIR.Instruction;
 
 import MIR.IREntity.entity;
+import MIR.Value.*;
 
 public class storeInst extends Instruction {
-    public entity value;
-    public entity pointer;
-    public storeInst(entity value, entity pointer) {
+    public value value;
+    public value pointer;
+
+    public storeInst(value value, value pointer) {
         this.value = value;
         this.pointer = pointer;
     }

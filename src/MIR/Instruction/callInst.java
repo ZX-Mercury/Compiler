@@ -1,18 +1,22 @@
 package MIR.Instruction;
 
-import MIR.IREntity.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+
+import MIR.Value.*;
 
 import java.util.ArrayList;
 
 public class callInst extends Instruction {
-    public localVar ret;
+    public varLocal ret;
     public String funcName;
-    public ArrayList<entity> para;
-    public callInst(function func, String name) {
+    public ArrayList<value> para;
+
+    public callInst(varLocal ret, String funcName, value ... args) {
+        this.ret = ret;
+        this.funcName = funcName;
+
         para = new ArrayList<>();
-        if (!func.paraList.isEmpty()) {
-            para.addAll(func.paraList);
-        }
-        funcName = func.IRname;
+        para.addAll(Arrays.asList(args));
     }
 }

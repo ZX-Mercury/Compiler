@@ -1,13 +1,11 @@
 package MIR.Instruction;
 
-import MIR.IREntity.entity;
-import MIR.IREntity.ptr;
+import MIR.Value.*;
 
 public class allocaInst extends Instruction {
-    public ptr dest;
-    public entity allocaType;
-    public allocaInst(ptr dest, entity allocaType) {
+    public varLocal dest;
+
+    public allocaInst(varLocal dest) {
         this.dest = dest;
-        this.allocaType = allocaType;
     }
 }

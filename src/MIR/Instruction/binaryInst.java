@@ -1,17 +1,18 @@
 package MIR.Instruction;
 
-import MIR.IREntity.*;
+import MIR.Value.*;
+
 public class binaryInst extends Instruction{
     public enum binaryOp{
         add, sub, mul, sdiv, srem, shl, ashr, and, or, xor
     }
     public binaryOp op;
-    public register lhs;
-    public entity op1, op2;
+    public varLocal result;
+    public value op1, op2;
 
-    public binaryInst(register lhs, entity op1, entity op2, binaryOp op) {
+    public binaryInst(varLocal result, value op1, value op2, binaryOp op) {
         super();
-        this.lhs = lhs;
+        this.result = result;
         this.op1 = op1;
         this.op2 = op2;
         this.op = op;

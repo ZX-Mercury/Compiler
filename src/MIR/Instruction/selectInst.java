@@ -1,15 +1,17 @@
 package MIR.Instruction;
 import MIR.Instruction.Instruction;
 import MIR.IREntity.*;
+import MIR.Value.*;
 
 public class selectInst extends Instruction {
-    public localVar ret;
-    public entity cond;
-    public entity op1, op2;
-    public selectInst(entity obj1, entity obj2, entity obj3, String name) {
-        cond = obj1;
-        op1 = obj2;
-        op2 = obj3;
+    public varLocal ret;
+    public value cond;
+    public value op1, op2;
+    public selectInst(varLocal ret, value obj1, value obj2, value obj3) {
+        this.ret = ret;
+        this.cond = obj1;
+        this.op1 = obj2;
+        this.op2 = obj3;
     }
 
 
