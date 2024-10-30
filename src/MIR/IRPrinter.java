@@ -23,5 +23,4 @@ public class IRPrinter {
             visitBlock(block);
         }
     }
-
 }

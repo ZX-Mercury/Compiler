@@ -6,13 +6,21 @@ import Util.position;
 import MIR.Instruction.Instruction;
 import MIR.Instruction.terminalInst;
 import MIR.Instruction.branchInst;
+import MIR.Value.value;
 import java.util.ArrayList;
 
 public class block extends entity {
     public String name;
     private ArrayList<Instruction> insts = new ArrayList<>();
+    public value result;
+    public function fuc;
     private terminalInst tailInst = null;
-    public block() {}
+
+    public block(){}
+    public block(String funcName, function funcDef) {
+        this.fuc=funcDef;
+        this.name = funcName;
+    }
     public void push_back(Instruction inst) {
         insts.add(inst);
         if (inst instanceof terminalInst) {
