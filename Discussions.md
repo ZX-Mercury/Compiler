@@ -65,3 +65,48 @@ A. ?
 ---
 5. 遇到 continue，后面的内容**在本阶段**保留还是直接优化掉？
 - T. 在 “continue 是在循环中的条件语句里”这种情况下，后面在条件分支外的东西还是有必要保留，可能吧……？
+
+## 11月7日
+took a break
+
+## 11月8日
+1. 在 godbolt 在线转换网站上，把下面代码转为 LLVM，
+
+       int f(int x){
+         return x+1;
+       }
+
+       int main(){
+         int i=3;
+         int j=f(i);
+         return j;
+       }
+得到
+
+       define i32 @f(int)(i32 %0) {
+         %2 = alloca i32
+         store i32 %0, ptr %2              // *%2 = x
+         %3 = load i32, ptr %2             // %3 = *%2 = x
+         %4 = add i32 %3, 1                // %4 = %3 + 1
+         ret i32 %4
+       }
+   
+       define i32 @main() {
+         %1 = alloca i32
+         %2 = alloca i32
+         %3 = alloca i32
+         store i32 0, ptr %1
+         store i32 3, ptr %2
+         %4 = load i32, ptr %2
+         %5 = call i32 @f(int)(i32 %4)
+         store i32 %5, ptr %3
+         %6 = load i32, ptr %3
+         ret i32 %6
+       }
+main 函数里的 %1 并没有真正参与运算，它有什么作用？
+
+---
+2. Instruction 这个类（以及它派生出的 branchInst、callInst 等类）的定位究竟是什么？
+具体而言，只要保证一个 Instruction 类能够转化出 LLVM IR 中的一个指令（或者一个字符串形式的指令），就可以了吗？
+
+---

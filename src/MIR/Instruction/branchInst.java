@@ -3,6 +3,7 @@ package MIR.Instruction;
 import MIR.IREntity.block;
 import MIR.Value.value;
 
+//for unconditional branch instruction, see jumpInst
 public class branchInst extends terminalInst {
     public value cond;
     public block trueBranch, falseBranch;
