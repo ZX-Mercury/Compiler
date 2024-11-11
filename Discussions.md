@@ -34,6 +34,7 @@ A. ?
 ## 11月6日
 1. phi 指令一般用在什么地方？除了文档举例的循环外，还有其他地方吗？
 - T. ~~也许三目运算终会用到？~~ 应该不会，用 select 足矣。
+- A. 在 codegen 阶段，可以完全避开 phi 指令，而使用 alloca 指令。
 ---
 2. 
 > 昨天的 “Builder 和 Printer” 问题其实在文档中有回答：
@@ -46,10 +47,14 @@ A. ?
 以及函数所含的若干 block。这完备了吗？
 （参考：src.MIR.IREntity.function）
 
+T. 似乎还需要一个 map，记录变量名和寄存器的对应关系。
+
 ---
 3. 上一个问题是针对 function 的类，那在 builder 里对应的visit function应该包含哪些东西？  
 我目前加一个boolean isMemberFunction和指示函数是否结束的endBlock，完备了吗？
 （参考：src.MIR.IRBuilder 中的public void visit(funcDefNode it)）
+
+T. 似乎足够了。
 
 ---
 4.  
@@ -61,6 +66,8 @@ A. ?
 
     %class.A = type <{ i32, i8, [3 x i8] }>
 “\[3 x i8]”的位置（第一个还是最后一个）有讲究吗？
+
+A. 没什么讲究。
 
 ---
 5. 遇到 continue，后面的内容**在本阶段**保留还是直接优化掉？
@@ -105,8 +112,12 @@ took a break
        }
 main 函数里的 %1 并没有真正参与运算，它有什么作用？
 
+A. 没什么作用。
+
 ---
 2. Instruction 这个类（以及它派生出的 branchInst、callInst 等类）的定位究竟是什么？
 具体而言，只要保证一个 Instruction 类能够转化出 LLVM IR 中的一个指令（或者一个字符串形式的指令），就可以了吗？
+
+A. 确实如此，没有检查正确性的必要，也没必要记录或推断其他信息。
 
 ---

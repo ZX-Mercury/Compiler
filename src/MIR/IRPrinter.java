@@ -23,4 +23,7 @@ public class IRPrinter {
             visitBlock(block);
         }
     }
+
+    public void visitStmtNode(){
+    }
 }
