@@ -24,7 +24,6 @@ public class IRBuilder implements ASTVisitor {
 
     public IRBuilder(globalScope gScope) {
         this.gScope = gScope;
-        currentBlock = new block();
     }
 
     public void visit(RootNode it){
@@ -32,6 +31,11 @@ public class IRBuilder implements ASTVisitor {
             node.accept(this);
         }
     }
+
+    public void visit(varDefStmtNode it){
+
+    }
+
     public void visit(funcDefNode it){
         //TODO: member function
         scope = new FuncScope(scope, it.retType);
@@ -306,7 +310,6 @@ public class IRBuilder implements ASTVisitor {
     public void visit(stringLiteralNode stringLiteralNode){}
     public void visit(arrayLiteralNode arrayLiteralNode){}
     public void visit(FmtstringNode fmtstringNode){}
-    public void visit(varDefStmtNode varDefStmtNode){}
     public void visit(newArrayExprNode newArrayExprNode){}
 
     private value cpt(boolean isLeftValue) {

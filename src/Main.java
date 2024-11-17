@@ -21,9 +21,9 @@ import java.io.InputStream;
 public class Main {
     public static void main(String[] args) throws Exception {
         //String name = "testcases/sema/const-array-package/const-array7.mx";
-        //String name = "test.mx";
-        //InputStream input = new FileInputStream(name);
-        InputStream input = System.in;
+        String name = "test.mx";
+        InputStream input = new FileInputStream(name);
+        //InputStream input = System.in;
 
         try {
             RootNode ASTRoot;
@@ -42,7 +42,7 @@ public class Main {
             new SemanticChecker(gScope).visit(ASTRoot);
 
             new IRBuilder(gScope).visit(ASTRoot);
-            //new IRPrinter(System.out).visitRoot(ASTRoot);
+            new IRPrinter(System.out).visitRoot(ASTRoot);
         } catch (error er) {
             System.out.print(er.toString());
             System.exit(1);
