@@ -24,16 +24,36 @@ public class IRBuilder implements ASTVisitor {
 
     public IRBuilder(globalScope gScope) {
         this.gScope = gScope;
+        this.scope = new Scope(gScope);
     }
 
     public void visit(RootNode it){
         for(ASTNode node : it.parts){
-            node.accept(this);
+            if(node instanceof varDefStmtNode) {
+                for (varDeclareNode varDec : ((varDefStmtNode) node).varDef.varDeclarations) {
+                    scope.entities.put(varDec.name, new varGlobal(varDec.name, type.toIRType(((varDefStmtNode) node).varDef.type)));
+                }
+            }
         }
     }
 
     public void visit(varDefStmtNode it){
+        if (it.varDef!=null) {
+            it.varDef.accept(this);
+        }
+    }
 
+    public void visit(varDefNode it){
+        for (varDeclareNode node : it.varDeclarations) {
+            if(node.isInitialized){
+                node.expression.accept(this);
+            }
+            scope.entities.put(node.name, new varGlobal(node.name, type.toIRType(it.type)));
+        }
+    }
+
+    public void visit(intLiteralNode intLiteralNode){
+        currentBlock.result = new constInt(intLiteralNode.value);
     }
 
     public void visit(funcDefNode it){
@@ -294,7 +314,6 @@ public class IRBuilder implements ASTVisitor {
     public void visit(pureExprStmtNode pureExprStmtNode){}
     public void visit(classConstructNode classConstructNode){}
     public void visit(varDeclareNode varDeclareNode){}
-    public void visit(varDefNode varDefNode){}
     public void visit(parameterNode parameterNode){}
     public void visit(funcDefParameterNode fucDefParemeterNode){}
     public void visit(classDefNode classDefNode){}
@@ -304,7 +323,6 @@ public class IRBuilder implements ASTVisitor {
     public void visit(memberExprNode memberExprNode){}
     public void visit(forDefStmtNode forDefStmtNode){}
     public void visit(forExpStmtNode forExpStmtNode){}
-    public void visit(intLiteralNode intLiteralNode){}
     public void visit(boolLiteralNode boolLiteralNode){}
     public void visit(nullLiteralNode nullLiteralNode){}
     public void visit(stringLiteralNode stringLiteralNode){}

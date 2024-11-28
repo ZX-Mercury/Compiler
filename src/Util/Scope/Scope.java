@@ -1,5 +1,6 @@
 package Util.Scope;
 
+import MIR.Value.value;
 import Util.error.semanticError;
 import Util.position;
 import Util.Type;
@@ -11,6 +12,7 @@ public class Scope {
     public HashMap<String, Type> members;
     public boolean isLoop, isFunction, isClass;//Only check whether THIS scope is Loop.
     public String className = null;
+    public HashMap<String, value> entities = new HashMap<>();
 
     public Type fucRetType;
     public Scope parentScope;
