@@ -31,10 +31,11 @@ public class IRBuilder implements ASTVisitor {
         for(ASTNode node : it.parts){
             if(node instanceof varDefStmtNode) {
                 for (varDeclareNode varDec : ((varDefStmtNode) node).varDef.varDeclarations) {
-                    scope.entities.put(varDec.name, new varGlobal(varDec.name, type.toIRType(((varDefStmtNode) node).varDef.type)));
+                    gScope.entities.put(varDec.name, new varGlobal(varDec.name, type.toIRType(((varDefStmtNode) node).varDef.type)));
                 }
             }
         }
+        int x=33;
     }
 
     public void visit(varDefStmtNode it){

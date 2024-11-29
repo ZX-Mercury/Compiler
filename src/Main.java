@@ -42,7 +42,7 @@ public class Main {
             new SemanticChecker(gScope).visit(ASTRoot);
 
             new IRBuilder(gScope).visit(ASTRoot);
-            new IRPrinter(System.out).visitRoot(ASTRoot);
+            new IRPrinter(System.out, gScope).visitRoot(ASTRoot);
         } catch (error er) {
             System.out.print(er.toString());
             System.exit(1);
