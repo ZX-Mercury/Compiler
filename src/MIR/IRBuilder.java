@@ -31,11 +31,25 @@ public class IRBuilder implements ASTVisitor {
         for(ASTNode node : it.parts){
             if(node instanceof varDefStmtNode) {
                 for (varDeclareNode varDec : ((varDefStmtNode) node).varDef.varDeclarations) {
-                    gScope.entities.put(varDec.name, new varGlobal(varDec.name, type.toIRType(((varDefStmtNode) node).varDef.type)));
+                    String name = varDec.name;
+
+                    varGlobal gVar = new varGlobal(name, type.toIRType(varDec.type));
+                    // int dim = varDec.type.dim; TODO: array
+
+                    if (varDec.isInitialized) {
+                        varDec.expression.accept(this);
+                        gVar.init = varDec.expression.val;
+                    }
+                    else {
+                        gVar.init = new constNull();
+                    }
+                    gScope.entities.put(varDec.name, gVar);
                 }
             }
+            else if (node instanceof funcDefNode) {
+                node.accept(this);
+            }
         }
-        int x=33;
     }
 
     public void visit(varDefStmtNode it){
@@ -53,8 +67,8 @@ public class IRBuilder implements ASTVisitor {
         }
     }
 
-    public void visit(intLiteralNode intLiteralNode){
-        currentBlock.result = new constInt(intLiteralNode.value);
+    public void visit(intLiteralNode it){
+        it.val = new constInt(it.value);
     }
 
     public void visit(funcDefNode it){

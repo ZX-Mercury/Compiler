@@ -8,6 +8,7 @@ import Util.Type;
 
 abstract public class ExpressionNode extends ASTNode {
     public Type type ;
+    public value val ;
     public boolean isLeftValue = false;
     public ExpressionNode (position pos) {
         super (pos) ;
