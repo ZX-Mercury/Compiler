@@ -62,14 +62,19 @@ public class IRPrinter {
                 if (i != func.parameters.size() - 1) out.print(", ");
             }*/
             out.println(") {");
+            for (var inst : func.blk.insts()) {
+                System.out.println(inst.toStr());
+            }
             //visitBlock(func.blocks.get(0));
             out.println("}");
         }
-        for (var block : t.blocks) {
+        /*for (var block : t.blocks) {
             visitBlock(block);
-        }
+        }*/
     }
 
     public void visitStmtNode(){
     }
+    /*public void visitStmtNode(){
+    }*/
 }

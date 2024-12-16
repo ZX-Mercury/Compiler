@@ -11,4 +11,9 @@ public class storeInst extends Instruction {
         this.value = value;
         this.pointer = pointer;
     }
+
+    @Override
+    public String toStr() {
+        return "";
+    }
 }

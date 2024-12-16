@@ -10,6 +10,10 @@ public class jumpInst extends terminalInst {
         this.dest = dest;
     }
 
+    @Override
+    public String toStr() {
+        return "";
+    }
     /*@Override
     public String toString() {
         return "jump " + dest.toString();

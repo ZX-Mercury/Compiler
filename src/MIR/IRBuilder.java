@@ -78,13 +78,14 @@ public class IRBuilder implements ASTVisitor {
         type retType = type.toIRType(it.retType);
         String funcName = (isMemberFunction ? String.format("struct.%s.%s", scope.className, it.name) : it.name);
         function funcDef = new function(funcName, retType);
-        currentBlock = new block(funcName + "entry", funcDef);
+        currentBlock = new block(funcName + ".entry", funcDef);
         if (it.name.equals("main")) {
             currentBlock.push_back(new callInst(null, "builtin.init"));
         }
         endBlock = false;
         it.suite.accept(this);
         endBlock = false;
+        it.blk=currentBlock;
         //irProgram.funcDefMap.put(funcName, funcDef);
         scope = scope.parentScope;
     }
@@ -109,9 +110,9 @@ public class IRBuilder implements ASTVisitor {
             submitBlock();
             return;
         }
-        value value=null;
+        value val=it.retExpr.val;
         //value = cpt(node.expr_.isLeftValue_);???
-        currentBlock.push_back(new retInst(value));
+        currentBlock.push_back(new retInst(val));
     }
     public void visit(preIncExprNode it){
         it.expression.accept(this);

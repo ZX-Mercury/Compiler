@@ -24,4 +24,8 @@ public class getelementptrInst extends Instruction{
         id1 = null;
         this.id2 = id2;
     }
+    @Override
+    public String toStr() {
+        return "";
+    }
 }

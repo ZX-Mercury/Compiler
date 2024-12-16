@@ -21,4 +21,8 @@ public class callInst extends Instruction {
         para = new ArrayList<>();
         para.addAll(Arrays.asList(args));
     }
+    @Override
+    public String toStr() {
+        return "";
+    }
 }

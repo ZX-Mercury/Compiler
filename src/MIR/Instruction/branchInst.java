@@ -14,6 +14,10 @@ public class branchInst extends terminalInst {
         this.falseBranch = falseBranch;
     }
 
+    @Override
+    public String toStr() {
+        return "";
+    }
 /*
     @Override
     public String toString() {

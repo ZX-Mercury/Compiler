@@ -16,4 +16,8 @@ public class phiInst extends Instruction {
         values = new ArrayList<>();
         blocks = new ArrayList<>();
     }
+    @Override
+    public String toStr() {
+        return "";
+    }
 }

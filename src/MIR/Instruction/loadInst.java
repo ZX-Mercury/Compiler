@@ -9,4 +9,8 @@ public class loadInst extends Instruction {
         this.result = result;
         this.pointer = pointer;
     }
+    @Override
+    public String toStr() {
+        return "";
+    }
 }

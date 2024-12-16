@@ -14,7 +14,10 @@ public class selectInst extends Instruction {
         this.op2 = obj3;
     }
 
-
+    @Override
+    public String toStr() {
+        return "";
+    }
     /*@Override
     public String toString() {
         return ret.toString()+" = select "+cond.type+" "+cond.getName()+", "+op1.type+" "+op1.getName()+", "+op2.type+" "+op2.getName();

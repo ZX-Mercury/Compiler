@@ -18,6 +18,10 @@ public class binaryInst extends Instruction{
         this.op = op;
     }
 
+    @Override
+    public String toStr() {
+        return "";
+    }
     /*@Override
     public String toString() {
         return "%" + dest + " = " + op + " " + lhs.type + " " + lhs + ", " + rhs;

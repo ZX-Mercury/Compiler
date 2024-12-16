@@ -19,7 +19,10 @@ public class icmpInst extends Instruction {
         this.lhs = lhs;
         this.rhs = rhs;
     }
-
+    @Override
+    public String toStr() {
+        return "";
+    }
 /*
     @Override
     public String toString() {
