@@ -1,7 +1,7 @@
 package MIR;
 
 import AST.RootNode;
-import MIR.IREntity.block;
+import MIR.IREntity.*;
 import MIR.Instruction.Instruction;
 import MIR.Value.*;
 
@@ -41,7 +41,6 @@ public class IRPrinter {
         }
         for (var funcname : globalScope.funcMember.keySet()) {
             ArrayList<String> builtin = new ArrayList<>(Arrays.asList("getInt", "print", "println", "printInt", "printlnInt", "toString", "getString"));
-            if(builtin.contains(funcname)) continue;
             var func = globalScope.funcMember.get(funcname);
             out.print("define ");
             var tp = toIRType(func.retType);
@@ -75,6 +74,10 @@ public class IRPrinter {
 
     public void visitStmtNode(){
     }
+
+    /*public void visitBlock(Block b){
+
+    }*/
     /*public void visitStmtNode(){
     }*/
 }

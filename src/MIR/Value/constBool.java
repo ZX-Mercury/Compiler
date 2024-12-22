@@ -9,4 +9,9 @@ public class constBool extends value {
         super(new intType(1));
         this.value = value;
     }
+
+    @Override
+    public String toStr() {
+        return value ? "tRue" : "fAlse";
+    }
 }

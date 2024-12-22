@@ -13,6 +13,6 @@ public class allocaInst extends Instruction {
 
     @Override
     public String toStr() {
-        return "";
+        return "%" + dest.toStr() + " = alloca " + dest.valueType.toStr();
     }
 }

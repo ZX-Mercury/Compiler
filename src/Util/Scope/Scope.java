@@ -9,10 +9,10 @@ import java.util.HashMap;
 
 public class Scope {
 
-    public HashMap<String, Type> members;
+    public HashMap<String, Type> members;   //this map used in AST
     public boolean isLoop, isFunction, isClass;//Only check whether THIS scope is Loop.
     public String className = null;
-    public HashMap<String, value> entities = new HashMap<>();
+    public HashMap<String, value> entities = new HashMap<>();   //this map used in MIR
 
     public Type fucRetType;
     public Scope parentScope;

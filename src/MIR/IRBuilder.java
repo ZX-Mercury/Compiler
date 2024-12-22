@@ -63,7 +63,14 @@ public class IRBuilder implements ASTVisitor {
             if(node.isInitialized){
                 node.expression.accept(this);
             }
-            scope.entities.put(node.name, new varGlobal(node.name, type.toIRType(it.type)));
+            if (scope.parentScope == null){ // global
+                scope.entities.put(node.name, new varGlobal(node.name, type.toIRType(it.type)));
+            }
+            else {  // local
+                var v = new varLocal(node.name, type.toIRType(it.type));
+                scope.entities.put(node.name, v);
+                currentBlock.push_back(new allocaInst(v));
+            }
         }
     }
 
@@ -106,11 +113,13 @@ public class IRBuilder implements ASTVisitor {
         }
         it.retExpr.accept(this);
         if (currentBlock.result == null) {
-            currentBlock.push_back(new retInst(null));
+            currentBlock.push_back(new retInst(it.retExpr.val));
             submitBlock();
             return;
         }
-        value val=it.retExpr.val;
+        value val;
+        if (it.retExpr.val!=null) val=it.retExpr.val;
+        else val=currentBlock.result;
         //value = cpt(node.expr_.isLeftValue_);???
         currentBlock.push_back(new retInst(val));
     }
@@ -120,8 +129,8 @@ public class IRBuilder implements ASTVisitor {
     }
     public void visit(postIncExprNode postIncExprNode){}
     public void visit(unaryExprNode unaryExprNode){}
-    public void visit(binaryExprNode it){/*
-        if (it.binaryOp == binaryExprNode.binaryOperator.AndAnd) {
+    public void visit(binaryExprNode it){
+        /*if (it.binaryOp == binaryExprNode.binaryOperator.AndAnd) {
             int id = andCnt++;
             block rhs = new block("andrhs" + id, currentBlock.belong);
             block end = new block("andend" + id, currentBlock.belong);
@@ -168,12 +177,12 @@ public class IRBuilder implements ASTVisitor {
             currentBlock_.instList_.add(new IRLoadInst(newVar, resultPtr));
             currentBlock_.result_ = newVar;
             return;
-        }
+        }*/
         varLocal newVar = null;
         it.lhs.accept(this);
-        value lhsValue = cpt(it.lhs.isLeftValue);
+        value lhsValue = it.lhs.val;
         it.rhs.accept(this);
-        value rhsValue = cpt(it.rhs.isLeftValue);
+        value rhsValue = it.rhs.val;
         switch (it.binaryOp) {
             case binaryExprNode.binaryOperator.Plus:
                 if (lhsValue.valueType instanceof intType) {
@@ -271,7 +280,7 @@ public class IRBuilder implements ASTVisitor {
                 else {
                 }
         }
-        currentBlock.result = newVar;*/
+        currentBlock.result = newVar;
     }
     public void visit(ifStmtNode it){/*
         int id = ifCnt_++;
@@ -322,12 +331,39 @@ public class IRBuilder implements ASTVisitor {
     public void visit(breakStmt breakStmt){
 
     }
-    public void visit(atomExprNode atomExprNode){}
+    public void visit(atomExprNode it){
+        switch (it.pritype) {
+            case This:
+                //currentBlock.result = new varLocal(new ptrType(new classType(scope.className)), "this");
+                break;
+            case Null:
+                currentBlock.result = new constNull();
+                break;
+            case Int:
+                currentBlock.result = new constInt(0);
+                break;
+            case Bool:
+                currentBlock.result = new constBool(false);
+                break;
+            case String:
+                //currentBlock.result = new constString("");
+                break;
+            case Identifier:
+                currentBlock.result = new varLocal(it.identifier, type.toIRType(scope.getType(it.identifier, true)));
+                break;
+            case Fmtstring:
+                //currentBlock.result = new constString(it.identifier);
+                break;
+        }
+    }
     public void visit(callExprNode callExprNode){}
     public void visit(arrayExprNode arrayExprNode){}
     public void visit(ternaryExprNode ternaryExprNode){}
     public void visit(continueStmtNode continueStmtNode){}
-    public void visit(pureExprStmtNode pureExprStmtNode){}
+    public void visit(pureExprStmtNode it){
+        it.expr.accept(this);
+        //currentBlock.push_back(new storeInst(it.expr.val, it.));
+    }
     public void visit(classConstructNode classConstructNode){}
     public void visit(varDeclareNode varDeclareNode){}
     public void visit(parameterNode parameterNode){}
@@ -335,7 +371,14 @@ public class IRBuilder implements ASTVisitor {
     public void visit(classDefNode classDefNode){}
     public void visit(parenExprNode parenExprNode){}
     public void visit(newVarExprNode newVarExprNode){}
-    public void visit(assignExprNode assignExprNode){}
+    public void visit(assignExprNode it){
+        it.rhs.accept(this);
+
+        //value rhsValue = currentBlock.result;
+        value rhsValue = it.rhs.val;
+        it.val = rhsValue;
+        it.lhs.accept(this);
+    }
     public void visit(memberExprNode memberExprNode){}
     public void visit(forDefStmtNode forDefStmtNode){}
     public void visit(forExpStmtNode forExpStmtNode){}

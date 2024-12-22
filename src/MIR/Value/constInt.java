@@ -10,4 +10,8 @@ public class constInt extends value {
         this.value = value;
     }
 
+    @Override
+    public String toStr() {
+        return Integer.toString(value);
+    }
 }

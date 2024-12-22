@@ -14,4 +14,9 @@ public class varLocal extends value {
     public static varLocal newvarlocal(type type) {
         return new varLocal(String.format("%d", cnt++), type);
     }
+
+    @Override
+    public String toStr() {
+        return name;
+    }
 }

@@ -20,10 +20,6 @@ public class binaryInst extends Instruction{
 
     @Override
     public String toStr() {
-        return "";
+        return "%" + result.name + " = " + op + " " + op1.toStr() + ", " + op2.toStr();
     }
-    /*@Override
-    public String toString() {
-        return "%" + dest + " = " + op + " " + lhs.type + " " + lhs + ", " + rhs;
-    }*/
 }

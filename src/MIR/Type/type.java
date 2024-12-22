@@ -29,4 +29,6 @@ public abstract class type {
         }
         return baseType;
     }
+
+    public abstract String toStr();
 }

@@ -18,4 +18,15 @@ public class function extends entity {
         this.args = new ArrayList<>();
         this.body = new ArrayList<>();
     }
+
+    public String declare(){
+        StringBuilder res = new StringBuilder("declare ");
+        res.append(retType.toString()).append(" @").append(name).append("(");
+        for (int i = 0; i < args.size(); i++) {
+            res.append(args.get(i).valueType.toString()).append(" ").append(args.get(i).name);
+            if (i != args.size() - 1) res.append(", ");
+        }
+        res.append(")");
+        return res.toString();
+    }
 }

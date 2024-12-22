@@ -10,4 +10,9 @@ public class varGlobal extends value {
         super(type);
         this.name = name;
     }
+
+    @Override
+    public String toStr() {
+        return name;
+    }
 }

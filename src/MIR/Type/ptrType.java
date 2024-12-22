@@ -1,7 +1,5 @@
 package MIR.Type;
 
-
-
 public class ptrType extends type {
     public type basetp;
     public int dim;
@@ -34,5 +32,10 @@ public class ptrType extends type {
     }
     public type deref() {
         return dim == 1 ? basetp : new ptrType(basetp, dim - 1);
+    }
+
+    @Override
+    public String toStr() {
+        return basetp.toString() + "*".repeat(dim);
     }
 }

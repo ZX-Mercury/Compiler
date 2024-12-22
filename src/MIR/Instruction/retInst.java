@@ -15,6 +15,6 @@ public class retInst extends Instruction {
     @Override
     public String toStr() {
         if (retValue == null) return "ret void";
-        else return "ret " + retValue.valueType.toString() + " " + retValue.toString();
+        else return "ret " + retValue.valueType.toStr() + " " + retValue.toStr();
     }
 }

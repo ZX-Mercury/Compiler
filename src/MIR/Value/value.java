@@ -7,4 +7,5 @@ public abstract class value {
     public value(type valueType) {
         this.valueType = valueType;
     }
+    public abstract String  toStr();
 }
