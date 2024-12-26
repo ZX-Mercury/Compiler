@@ -13,6 +13,6 @@ public class varGlobal extends value {
 
     @Override
     public String toStr() {
-        return name;
+        return "@" + name;
     }
 }

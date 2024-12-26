@@ -17,6 +17,6 @@ public class varLocal extends value {
 
     @Override
     public String toStr() {
-        return name;
+        return "%" + name;
     }
 }

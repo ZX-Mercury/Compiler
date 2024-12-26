@@ -14,6 +14,6 @@ public class storeInst extends Instruction {
 
     @Override
     public String toStr() {
-        return "";
+        return "store " + value.valueType.toStr() + " " + value.toStr() + ", ptr " + pointer.toStr();
     }
 }

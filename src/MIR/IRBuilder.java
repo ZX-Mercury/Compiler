@@ -74,6 +74,19 @@ public class IRBuilder implements ASTVisitor {
         }
     }
 
+    public void visit(classDefNode it){
+        /*scope=new ClassScope(scope);
+        IRClassDef classDef = new IRClassDef();
+        classDef.name=it.name;
+        for(var mem:it.vars){
+            classDef.members.add(new IRType(mem.vartype));
+        }
+        for(var func:it.funcs){
+            func.accept(this);
+        }
+        curScope=curScope.parent;*/
+    }
+
     public void visit(intLiteralNode it){
         it.val = new constInt(it.value);
     }
@@ -87,7 +100,7 @@ public class IRBuilder implements ASTVisitor {
         function funcDef = new function(funcName, retType);
         currentBlock = new block(funcName + ".entry", funcDef);
         if (it.name.equals("main")) {
-            currentBlock.push_back(new callInst(null, "builtin.init"));
+            //currentBlock.push_back(new callInst(null, "builtin.init"));
         }
         endBlock = false;
         it.suite.accept(this);
@@ -125,10 +138,46 @@ public class IRBuilder implements ASTVisitor {
     }
     public void visit(preIncExprNode it){
         it.expression.accept(this);
-        varLocal var1 =  varLocal.newvarlocal(new intType(32));
+        varLocal var1 =  (varLocal) currentBlock.result;
+        varLocal var2 = varLocal.newvarlocal(new intType(32));
+        //int name=curFunc.cnt++;
+        if(it.preIncOp == preIncExprNode.preIncOperator.PlusPlus){
+            currentBlock.push_back(new binaryInst(var2, var1, new constInt(1),binaryInst.binaryOp.add));
+        }else{
+            currentBlock.push_back(new binaryInst(var2, var1, new constInt(1),binaryInst.binaryOp.sub));
+        }
+        currentBlock.push_back(new storeInst(var2, var1));
+        currentBlock.result = var1;
     }
-    public void visit(postIncExprNode postIncExprNode){}
-    public void visit(unaryExprNode unaryExprNode){}
+    public void visit(postIncExprNode it){
+        it.expression.accept(this);
+        varLocal var1 =  (varLocal) currentBlock.result;
+        varLocal var2 = varLocal.newvarlocal(new intType(32));
+        //int name=curFunc.cnt++;
+        if(it.postIncOp == postIncExprNode.postIncOperator.PlusPlus){
+            currentBlock.push_back(new binaryInst(var2, var1, new constInt(1),binaryInst.binaryOp.add));
+        }else{
+            currentBlock.push_back(new binaryInst(var2, var1, new constInt(1),binaryInst.binaryOp.sub));
+        }
+        currentBlock.push_back(new storeInst(var2, var1));
+    }
+    public void visit(unaryExprNode it){
+        it.expression.accept(this);
+        varLocal newVarInt = varLocal.newvarlocal(new intType(32));
+        varLocal newVarBool = varLocal.newvarlocal(new intType(1));
+        if (it.unaryOp == unaryExprNode.unaryOperator.Not) {
+            currentBlock.push_back(new binaryInst(newVarBool, currentBlock.result, new constInt(1), binaryInst.binaryOp.xor));
+            currentBlock.result = newVarBool;
+        }
+        else if (it.unaryOp == unaryExprNode.unaryOperator.Minus) {
+            currentBlock.push_back(new binaryInst(newVarInt, new constInt(0), currentBlock.result, binaryInst.binaryOp.sub));
+            currentBlock.result = newVarInt;
+        }
+        else if (it.unaryOp == unaryExprNode.unaryOperator.Tilde) {
+            currentBlock.push_back(new binaryInst(newVarInt, currentBlock.result, new constInt(-1), binaryInst.binaryOp.xor));
+            currentBlock.result = newVarInt;
+        }
+    }
     public void visit(binaryExprNode it){
         /*if (it.binaryOp == binaryExprNode.binaryOperator.AndAnd) {
             int id = andCnt++;
@@ -325,10 +374,10 @@ public class IRBuilder implements ASTVisitor {
         }
         currentBlock_ = end;*/
     }
-    public void visit(whileStmtNode whileStmtNode){
+    public void visit(whileStmtNode it){
 
     }
-    public void visit(breakStmt breakStmt){
+    public void visit(breakStmt it){
 
     }
     public void visit(atomExprNode it){
@@ -356,21 +405,20 @@ public class IRBuilder implements ASTVisitor {
                 break;
         }
     }
-    public void visit(callExprNode callExprNode){}
-    public void visit(arrayExprNode arrayExprNode){}
-    public void visit(ternaryExprNode ternaryExprNode){}
-    public void visit(continueStmtNode continueStmtNode){}
+    public void visit(callExprNode it){}
+    public void visit(arrayExprNode it){}
+    public void visit(ternaryExprNode it){}
+    public void visit(continueStmtNode it){}
     public void visit(pureExprStmtNode it){
         it.expr.accept(this);
         //currentBlock.push_back(new storeInst(it.expr.val, it.));
     }
-    public void visit(classConstructNode classConstructNode){}
-    public void visit(varDeclareNode varDeclareNode){}
-    public void visit(parameterNode parameterNode){}
-    public void visit(funcDefParameterNode fucDefParemeterNode){}
-    public void visit(classDefNode classDefNode){}
-    public void visit(parenExprNode parenExprNode){}
-    public void visit(newVarExprNode newVarExprNode){}
+    public void visit(classConstructNode it){}
+    public void visit(varDeclareNode it){}
+    public void visit(parameterNode it){}
+    public void visit(funcDefParameterNode it){}
+    public void visit(parenExprNode it){it.expr.accept(this);}
+    public void visit(newVarExprNode it){}
     public void visit(assignExprNode it){
         it.rhs.accept(this);
 
@@ -379,15 +427,15 @@ public class IRBuilder implements ASTVisitor {
         it.val = rhsValue;
         it.lhs.accept(this);
     }
-    public void visit(memberExprNode memberExprNode){}
-    public void visit(forDefStmtNode forDefStmtNode){}
-    public void visit(forExpStmtNode forExpStmtNode){}
-    public void visit(boolLiteralNode boolLiteralNode){}
-    public void visit(nullLiteralNode nullLiteralNode){}
-    public void visit(stringLiteralNode stringLiteralNode){}
-    public void visit(arrayLiteralNode arrayLiteralNode){}
-    public void visit(FmtstringNode fmtstringNode){}
-    public void visit(newArrayExprNode newArrayExprNode){}
+    public void visit(memberExprNode it){}
+    public void visit(forDefStmtNode it){}
+    public void visit(forExpStmtNode it){}
+    public void visit(boolLiteralNode it){}
+    public void visit(nullLiteralNode it){}
+    public void visit(stringLiteralNode it){}
+    public void visit(arrayLiteralNode it){}
+    public void visit(FmtstringNode it){}
+    public void visit(newArrayExprNode it){}
 
     private value cpt(boolean isLeftValue) {
         if (!isLeftValue) {

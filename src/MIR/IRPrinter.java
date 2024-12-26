@@ -41,6 +41,7 @@ public class IRPrinter {
         }
         for (var funcname : globalScope.funcMember.keySet()) {
             ArrayList<String> builtin = new ArrayList<>(Arrays.asList("getInt", "print", "println", "printInt", "printlnInt", "toString", "getString"));
+            if (builtin.contains(funcname)) continue;
             var func = globalScope.funcMember.get(funcname);
             out.print("define ");
             var tp = toIRType(func.retType);
@@ -61,7 +62,7 @@ public class IRPrinter {
                 if (i != func.parameters.size() - 1) out.print(", ");
             }*/
             out.println(") {");
-            for (var inst : func.blk.insts()) {
+            for (Instruction inst : func.blk.insts()) {
                 System.out.println(inst.toStr());
             }
             //visitBlock(func.blocks.get(0));
